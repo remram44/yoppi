@@ -1,0 +1,27 @@
+{% extends "ftp/base.html" %}
+
+{% block page_title %}Listing - {{server.display_name}} - Poppi{% endblock %}
+
+{% block title %}
+{{server.display_name}}
+{% endblock %}
+
+{% block content %}
+<table class="simple" width="100%" style="border-collapse:collapse;">
+    <tr>
+        <td width="395" valign="top" style="padding:0px;border-right:1px solid #AAAAAA;">
+    {% include "ftp/ftp_list.html" %}
+        </td>
+        <td valign="top" style="padding:0px">
+            <table class="content" width="100%" style="border-bottom:1px solid #AAAAAA;">
+                <tr class="titre">
+                    <td width="18"></td>
+                    <td>Nom</td>
+                    <td width="100"  align="right">Size</td>
+                </tr>
+    {% include "ftp/file_list.html" %}
+            </table>
+        </td>
+    </tr>
+</table>
+{% endblock %}

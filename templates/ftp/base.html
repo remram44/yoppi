@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>{% block page_title %}Poppi{% endblock %}</title>
+        <link rel="stylesheet" href="/static/style.css" type="text/css" />
+    </head>
+    <body>
+            
+        <table class="simple" height="37" width="100%" cellspacing="0">
+            <tr>
+                <td width="150" style="padding-left:3px;"> 
+                    <a href="/"><img src="/static/home.png" title="Retour à la page d'accueil" alt="Accueil" /></a> 
+                    <a href="#"><img src="/static/series.png" title="Séries" alt="Séries" /></a>
+                </td>
+                <td class="titre">
+                    {% block title %}{% endblock %}
+                </td>
+                <!--<td width="110" align="right">
+                    <a href="#"><img src="/static/prefs.png" title="Préférences" /></a>
+                </td>-->
+                <td width="190" align="right">
+                    <form action="/search/" method="get" style="display:inline;">
+                        <input type="search" name="query" results="10" placeholder="Rechercher" autosave="indexer" style="width: 180px; margin-right: 3px;" />
+                    </form>
+                </td>
+            </tr>
+        </table>
+
+        {% block content %}{% endblock %}
+        
+        <p align="center" style="clear: both; margin-top: 10px;">Poppi Indexer on <a href="https://github.com/remram44/poppi">github.com</a></p>
+
+    </body>
+</html>

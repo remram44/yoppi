@@ -1,0 +1,37 @@
+<table class="content" width="100%" style="border-bottom: 1px solid #AAAAAA;">
+     <tr class="titre">
+        <td width="18"></td>
+        <td>Name</td>
+        <td width="80" align="right">Size</td>
+        <td width="80">Offline for</td>
+    </tr>
+    {% if servers %}
+        {% for server in servers %}
+    <tr class="{% if active_server != server %}{% cycle 'odd' 'even' %}{% else %}selected{% endif %}">
+        <td><a href="{% url ftp.views.server address=server.address %}">
+            {% if server.online %}
+            <img src="/static/hd.png" />
+            {% else %}
+            <img src="/static/delete.png" />
+            {% endif %}
+        </a></td>
+        <td><a href="{% url ftp.views.server server.address %}">{{server.display_name|escape}}</a></td>
+        <td align="right">{{server.display_size}}</td>
+        <td style="padding-left: 15px">
+            {% if server.online %}
+            -
+            {% else %}
+            {{server.display_lastonline}}
+            {% endif %}
+        </td>
+    </tr>
+        {% endfor %}
+    {% else %}
+    <tr class="odd">
+        <td></td>
+        <td style="font-style: oblique;">No servers...</td>
+        <td align="right"></td>
+        <td style="padding-left: 15px"></td>
+    </tr>
+    {% endif %}
+</table>

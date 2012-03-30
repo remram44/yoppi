@@ -1,0 +1,23 @@
+{% if files %}
+    {% for file in files %}
+        <tr class="{% cycle 'odd' 'even' %}">
+        {% if file.is_directory %}
+            {% url ftp.views.server address=active_server.address path=file.fullpath as new_url %}
+            <td><a href="{{new_url}}"><img src="/static/folder.png" /></a></td>
+            <td><a href="{{new_url}}">{{file.name}}</a></td>
+            <td width="100" align="right">{{file.display_size}}</td>
+        {% else %}
+            {% url ftp.views.download server=active_server.address file=file.fullpath as new_url %}
+            <td><a href="{{new_url}}"><img src="/static/file.png" /></a></td>
+            <td><a href="{{new_url}}">{{file.name}}</a></td>
+            <td width="100" align="right">{{file.display_size}}</td>
+        {% endif %}
+        </tr>
+    {% endfor %}
+{% else %}
+        <tr class="odd">
+            <td></td>
+            <td style="font-style: oblique;">No files to show</td>
+            <td></td>
+        </tr>
+{% endif %}
