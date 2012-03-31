@@ -20,3 +20,16 @@ def server(request, address):
         'ftp/server.html',
         {'servers': list(servers), 'active_server': server, 'files': list(files)}
     )
+
+
+def search(request):
+    try:
+        query = request.GET['query']
+        # TODO : A simple contains is probably not enough
+        files = File.objects.filter(name__contains=query)
+        return render_to_response(
+            'ftp/search.html',
+            {'files': list(files), 'query': query}
+        )
+    except KeyError:
+        return HttpResponseRedirect(reverse('ftp.views.index'))

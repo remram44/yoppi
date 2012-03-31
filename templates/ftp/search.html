@@ -1,0 +1,18 @@
+{% extends "ftp/base.html" %}
+
+{% block page_title %}Search results - Poppi{% endblock %}
+
+{% block title %}
+Search: {{query}}
+{% endblock %}
+
+{% block content %}
+<table class="content" width="100%" style="border-bottom:1px solid #AAAAAA;">
+    <tr class="titre">
+        <td width="18"></td>
+        <td>Nom</td>
+        <td width="100"  align="right">Size</td>
+    </tr>
+    {% include "ftp/file_list.html" %}
+</table>
+{% endblock %}

@@ -7,6 +7,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     url(r"^$", "ftp.views.index"),
     url(r"^server/(?P<address>[a-z0-9_.-]+)/$", "ftp.views.server"),
+    url(r"^search/$", "ftp.views.search"),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     #url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
