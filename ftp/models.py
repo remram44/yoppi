@@ -52,7 +52,7 @@ class File(models.Model):
     size = models.IntegerField()
 
     def __unicode__(self):
-        return self.server.__unicode__() + u":" + self.path + u"/" + self.name
+        return u"%s:%s/%s" % (unicode(self.server), self.path, self.name)
 
     @models.permalink
     def get_absolute_url(self):
