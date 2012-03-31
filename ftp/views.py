@@ -7,7 +7,7 @@ def index(request):
     servers = FtpServer.objects.all()
     return render_to_response(
         'ftp/index.html',
-        {'servers': servers, 'active_server': None}
+        {'servers': list(servers), 'active_server': None}
     )
 
 
@@ -17,5 +17,5 @@ def server(request, address):
     files = server.files.all()
     return render_to_response(
         'ftp/server.html',
-        {'servers': servers, 'active_server': server, 'files': files}
+        {'servers': list(servers), 'active_server': server, 'files': list(files)}
     )
