@@ -9,14 +9,14 @@
         {% for server in servers %}
             {% cycle 'odd' 'even' as column silent %}
     <tr class="{% if active_server != server %}{{column}}{% else %}selected{% endif %}">
-        <td><a href="{% url ftp.views.server address=server.address %}">
+        <td><a href="{{ server.get_absolute_url }}">
             {% if server.online %}
             <img src="/static/hd.png" />
             {% else %}
             <img src="/static/delete.png" />
             {% endif %}
         </a></td>
-        <td><a href="{% url ftp.views.server server.address %}">{{server.display_name|escape}}</a></td>
+        <td><a href="{{ server.get_absolute_url }}">{{server.display_name|escape}}</a></td>
         <td align="right">{{server.size|filesizeformat}}</td>
         <td style="padding-left: 15px">
             {% if server.online %}

@@ -28,6 +28,10 @@ class FtpServer(models.Model):
     def __unicode__(self):
         return self.address
 
+    @models.permalink
+    def get_absolute_url(self):
+        return ('ftp.views.server', (self.address,))
+
     def display_lastonline(self):
         t = (datetime.datetime.now() - self.last_online).total_seconds()
         last_label = ''
@@ -49,6 +53,13 @@ class File(models.Model):
 
     def __unicode__(self):
         return self.server.__unicode__() + u":" + self.path + u"/" + self.name
+
+    @models.permalink
+    def get_absolute_url(self):
+        if self.is_directory:
+            return ('ftp.views.server', (self.server.address, self.fullpath))
+        else:
+            return ('ftp.views.download', (self.server.address, self.fullpath))
 
     def fullpath(self):
         return self.path + u"/" + self.name
