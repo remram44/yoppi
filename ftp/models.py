@@ -3,28 +3,6 @@ import math
 import datetime
 
 
-# TODO : Move somewhere else
-_suffixes = (
-    'o',
-    'Kio',
-    'Mio',
-    'Gio',
-    'Tio',
-    'Pio',
-    'Eio',
-    'Zio',
-    'Yio',
-)
-
-def pretty_size(size):
-    if size == 0:
-        return '0'
-    exponent = int(math.log(size)/math.log(1024))
-    ssize = size/math.pow(1024, exponent)
-    suffix = _suffixes[int(exponent)]
-    return "%.2f %s" % (ssize, suffix)
-
-
 class FtpServer(models.Model):
     address = models.CharField("server's DNS name or IP address", primary_key=True, max_length=200)
     name = models.CharField("optionnal readable name", max_length=30, blank=True)
@@ -50,9 +28,6 @@ class FtpServer(models.Model):
     def __unicode__(self):
         return self.address
 
-    def display_size(self):
-        return pretty_size(self.size)
-
     def display_lastonline(self):
         t = (datetime.datetime.now() - self.last_online).total_seconds()
         last_label = ''
@@ -77,6 +52,3 @@ class File(models.Model):
 
     def fullpath(self):
         return self.path + u"/" + self.name
-
-    def display_size(self):
-        return pretty_size(self.size)

@@ -5,12 +5,12 @@
             {% url ftp.views.server address=active_server.address path=file.fullpath as new_url %}
             <td><a href="{{new_url}}"><img src="/static/folder.png" /></a></td>
             <td><a href="{{new_url}}">{{file.name}}</a></td>
-            <td width="100" align="right">{{file.display_size}}</td>
+            <td width="100" align="right">{{file.size|filesizeformat}}</td>
         {% else %}
             {% url ftp.views.download server=active_server.address file=file.fullpath as new_url %}
             <td><a href="{{new_url}}"><img src="/static/file.png" /></a></td>
             <td><a href="{{new_url}}">{{file.name}}</a></td>
-            <td width="100" align="right">{{file.display_size}}</td>
+            <td width="100" align="right">{{file.size|filesizeformat}}</td>
         {% endif %}
         </tr>
     {% endfor %}

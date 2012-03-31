@@ -17,7 +17,7 @@
             {% endif %}
         </a></td>
         <td><a href="{% url ftp.views.server server.address %}">{{server.display_name|escape}}</a></td>
-        <td align="right">{{server.display_size}}</td>
+        <td align="right">{{server.size|filesizeformat}}</td>
         <td style="padding-left: 15px">
             {% if server.online %}
             -
