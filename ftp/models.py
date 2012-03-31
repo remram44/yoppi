@@ -3,25 +3,34 @@ import math
 import datetime
 
 
+# TODO : Move somewhere else
+_suffixes = (
+    'o',
+    'Kio',
+    'Mio',
+    'Gio',
+    'Tio',
+    'Pio',
+    'Eio',
+    'Zio',
+    'Yio',
+)
+
+def pretty_size(size):
+    if size == 0:
+        return '0'
+    exponent = int(math.log(size)/math.log(1024))
+    ssize = size/math.pow(1024, exponent)
+    suffix = _suffixes[int(exponent)]
+    return "%.2f %s" % (ssize, suffix)
+
+
 class FtpServer(models.Model):
     address = models.CharField("server's DNS name or IP address", primary_key=True, max_length=200)
     name = models.CharField("optionnal readable name", max_length=30, blank=True)
     online = models.BooleanField()
     size = models.IntegerField()
     last_online = models.DateTimeField()
-
-    # TODO : Move somewhere else
-    _suffixes = (
-        'o',
-        'Kio',
-        'Mio',
-        'Gio',
-        'Tio',
-        'Pio',
-        'Eio',
-        'Zio',
-        'Yio',
-    )
 
     # TODO : Locale-dependent
     _times = (
@@ -42,12 +51,7 @@ class FtpServer(models.Model):
         return self.address
 
     def display_size(self):
-        if self.size == 0:
-            return '0'
-        exponent = int(math.log(self.size)/math.log(1024))
-        ssize = self.size/math.pow(1024, exponent)
-        suffix = FtpServer._suffixes[int(exponent)]
-        return "%.2f %s" % (ssize, suffix)
+        return pretty_size(self.size)
 
     def display_lastonline(self):
         t = (datetime.datetime.now() - self.last_online).total_seconds()
@@ -66,9 +70,13 @@ class File(models.Model):
     name = models.CharField(max_length=200)
     path = models.CharField(max_length=300)
     is_directory = models.BooleanField()
+    size = models.IntegerField()
 
     def __unicode__(self):
         return self.server.__unicode__() + u":" + self.path + u"/" + self.name
 
     def fullpath(self):
         return self.path + u"/" + self.name
+
+    def display_size(self):
+        return pretty_size(self.size)
