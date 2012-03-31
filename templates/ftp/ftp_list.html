@@ -7,7 +7,8 @@
     </tr>
     {% if servers %}
         {% for server in servers %}
-    <tr class="{% if active_server != server %}{% cycle 'odd' 'even' %}{% else %}selected{% endif %}">
+            {% cycle 'odd' 'even' as column silent %}
+    <tr class="{% if active_server != server %}{{column}}{% else %}selected{% endif %}">
         <td><a href="{% url ftp.views.server address=server.address %}">
             {% if server.online %}
             <img src="/static/hd.png" />
