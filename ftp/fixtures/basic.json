@@ -1,0 +1,44 @@
+[
+  {
+    "pk": "192.168.0.42", 
+    "model": "ftp.ftpserver", 
+    "fields": {
+      "size": 123456798, 
+      "name": "Madjar's bazaar", 
+      "last_online": "2012-03-31T23:34:43", 
+      "online": true
+    }
+  }, 
+  {
+    "pk": "remram", 
+    "model": "ftp.ftpserver", 
+    "fields": {
+      "size": 654321, 
+      "name": "Remram's room", 
+      "last_online": "2012-03-31T23:35:29", 
+      "online": false
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "ftp.file", 
+    "fields": {
+      "path": "/", 
+      "size": 12, 
+      "is_directory": true, 
+      "name": "dir", 
+      "server": "192.168.0.42"
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "ftp.file", 
+    "fields": {
+      "path": "/", 
+      "size": 25, 
+      "is_directory": false, 
+      "name": "requirements.txt", 
+      "server": "192.168.0.42"
+    }
+  }
+]
