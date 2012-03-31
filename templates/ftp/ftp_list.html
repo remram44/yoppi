@@ -1,38 +1,37 @@
-<table class="content" width="100%" style="border-bottom: 1px solid #AAAAAA;">
-     <tr class="titre">
-        <td width="18"></td>
-        <td>Name</td>
-        <td width="80" align="right">Size</td>
-        <td width="80">Offline for</td>
+<table class="table">
+    <thead>
+    <tr class="titre">
+        <th>Name</th>
+        <th>Size</th>
+        <th>Offline for</th>
     </tr>
+    </thead>
+    <tbody><!-- TODO : active ftp -->
     {% if servers %}
         {% for server in servers %}
-            {% cycle 'odd' 'even' as column silent %}
-    <tr class="{% if active_server != server %}{{column}}{% else %}selected{% endif %}">
-        <td><a href="{{ server.get_absolute_url }}">
-            {% if server.online %}
-            <img src="/static/hd.png" />
-            {% else %}
-            <img src="/static/delete.png" />
-            {% endif %}
-        </a></td>
-        <td><a href="{{ server.get_absolute_url }}">{{server.display_name|escape}}</a></td>
-        <td align="right">{{server.size|filesizeformat}}</td>
-        <td style="padding-left: 15px">
-            {% if server.online %}
-            -
-            {% else %}
-            {{server.display_lastonline}}
-            {% endif %}
-        </td>
-    </tr>
+            <tr{% if active_server == server %} {% endif %}>
+                <td><a href="{{ server.get_absolute_url }}">
+                    {% if server.online %}
+                        <i class="icon-folder-open"></i>
+                    {% else %}
+                        <i class="icon-off"></i>
+                    {% endif %}{{server.display_name|escape}}</a></td>
+                <td>{{server.size|filesizeformat}}</td>
+                <td>
+                    {% if server.online %}
+                        -
+                    {% else %}
+                        {{server.display_lastonline}}
+                    {% endif %}
+                </td>
+            </tr>
         {% endfor %}
     {% else %}
-    <tr class="odd">
-        <td></td>
-        <td style="font-style: oblique;">No servers...</td>
-        <td align="right"></td>
-        <td style="padding-left: 15px"></td>
-    </tr>
+        <tr>
+            <td>No servers...</td>
+            <td></td>
+            <td></td>
+        </tr>
     {% endif %}
+    </tbody>
 </table>
