@@ -7,16 +7,18 @@ def all_servers():
 def index(request):
     return render_to_response(
         'ftp/index.html',
-        {'servers': all_servers(), 'active_server': None}
+        {'servers': all_servers()}
     )
 
 
-def server(request, address):
+def server(request, address, path=''):
+    if path != '' and path[-1] == '/':
+        path = path[:-1]
     server = get_object_or_404(FtpServer, address=address)
-    files = server.files.order_by('name')
+    files = server.files.filter(path=path).order_by('name')
     return render_to_response(
         'ftp/server.html',
-        {'servers': all_servers(), 'active_server': server, 'files': list(files)}
+        {'servers': all_servers(), 'active_server': server, 'files': list(files), 'path': path}
     )
 
 
@@ -24,7 +26,7 @@ def search(request):
     try:
         query = request.GET['query']
         # TODO : A simple contains is probably not enough
-        files = File.objects.filter(name__contains=query)
+        files = File.objects.filter(name__contains=query).order_by('name')
         return render_to_response(
             'ftp/search.html',
             {'servers': all_servers(), 'files': list(files), 'query': query}
