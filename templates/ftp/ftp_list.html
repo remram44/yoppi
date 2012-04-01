@@ -15,13 +15,13 @@
                         <i class="icon-folder-open"></i>
                     {% else %}
                         <i class="icon-off"></i>
-                    {% endif %}{{server.display_name|escape}}</a></td>
-                <td>{{server.size|filesizeformat}}</td>
+                    {% endif %}{{ server.display_name }}</a></td>
+                <td>{{ server.size|filesizeformat }}</td>
                 <td>
                     {% if server.online %}
                         -
                     {% else %}
-                        {{server.display_lastonline}}
+                        {{ server.display_lastonline }}
                     {% endif %}
                 </td>
             </tr>

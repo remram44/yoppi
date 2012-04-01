@@ -11,12 +11,12 @@
         {% for file in files %}
             <tr>
                 <td>{% if file.is_directory %}
-                    <a href="{% comment %}{% url ftp.views.server address=active_server.address path=file.fullpath %}{% endcomment %}"><i class="icon-folder-close"></i>
+                    <a href="{{ file.get_absolute_url }}"><i class="icon-folder-close"></i>
                 {% else %}
-                    <a href="{% comment %}{% url ftp.views.download server=active_server.address file=file.fullpath %}{% endcomment %}"><i class="icon-file"></i>
+                    <a href="{{ file.get_absolute_url }}"><i class="icon-file"></i>
                 {% endif %}
-                    {{file.name}}</a></td>
-                <td width="100" align="right">{{file.size|filesizeformat}}</td>
+                    {{ file.name }}</a></td>
+                <td width="100" align="right">{{ file.size|filesizeformat }}</td>
             </tr>
         {% endfor %}
     {% else %}
