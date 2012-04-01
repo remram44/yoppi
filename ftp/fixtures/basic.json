@@ -3,7 +3,7 @@
     "pk": "192.168.0.42", 
     "model": "ftp.ftpserver", 
     "fields": {
-      "size": 123456798, 
+      "size": 1350025, 
       "name": "Madjar's bazaar", 
       "last_online": "2012-03-31T23:34:43", 
       "online": true
@@ -13,18 +13,28 @@
     "pk": "remram", 
     "model": "ftp.ftpserver", 
     "fields": {
-      "size": 654321, 
+      "size": 700000958, 
       "name": "Remram's room", 
       "last_online": "2012-03-31T23:35:29", 
       "online": false
     }
   }, 
   {
+    "pk": "192.168.0.12", 
+    "model": "ftp.ftpserver", 
+    "fields": {
+      "size": 3197000000, 
+      "name": "", 
+      "last_online": "2012-02-28T16:44:58", 
+      "online": true
+    }
+  }, 
+  {
     "pk": 1, 
     "model": "ftp.file", 
     "fields": {
-      "path": "/", 
-      "size": 12, 
+      "path": "", 
+      "size": 1350000, 
       "is_directory": true, 
       "name": "dir", 
       "server": "192.168.0.42"
@@ -34,11 +44,132 @@
     "pk": 2, 
     "model": "ftp.file", 
     "fields": {
-      "path": "/", 
+      "path": "", 
       "size": 25, 
       "is_directory": false, 
       "name": "requirements.txt", 
       "server": "192.168.0.42"
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "ftp.file", 
+    "fields": {
+      "path": "/dir", 
+      "size": 150000, 
+      "is_directory": false, 
+      "name": "stuff.txt", 
+      "server": "192.168.0.42"
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "ftp.file", 
+    "fields": {
+      "path": "/dir", 
+      "size": 1200000, 
+      "is_directory": false, 
+      "name": "icon.png", 
+      "server": "192.168.0.42"
+    }
+  }, 
+  {
+    "pk": 5, 
+    "model": "ftp.file", 
+    "fields": {
+      "path": "", 
+      "size": 700000000, 
+      "is_directory": false, 
+      "name": "holiday_in_paris.avi", 
+      "server": "remram"
+    }
+  }, 
+  {
+    "pk": 6, 
+    "model": "ftp.file", 
+    "fields": {
+      "path": "", 
+      "size": 958, 
+      "is_directory": false, 
+      "name": "todo.txt", 
+      "server": "remram"
+    }
+  }, 
+  {
+    "pk": 7, 
+    "model": "ftp.file", 
+    "fields": {
+      "path": "/mirror", 
+      "size": 3197000000, 
+      "is_directory": true, 
+      "name": "debian-amd64", 
+      "server": "192.168.0.12"
+    }
+  }, 
+  {
+    "pk": 8, 
+    "model": "ftp.file", 
+    "fields": {
+      "path": "/mirror/debian-amd64", 
+      "size": 646000000, 
+      "is_directory": false, 
+      "name": "debian-testing-amd64-CD-1.iso", 
+      "server": "192.168.0.12"
+    }
+  }, 
+  {
+    "pk": 9, 
+    "model": "ftp.file", 
+    "fields": {
+      "path": "/mirror/debian-amd64", 
+      "size": 648000000, 
+      "is_directory": false, 
+      "name": "debian-testing-amd64-CD-2.iso", 
+      "server": "192.168.0.12"
+    }
+  }, 
+  {
+    "pk": 10, 
+    "model": "ftp.file", 
+    "fields": {
+      "path": "/mirror/debian-amd64", 
+      "size": 618000000, 
+      "is_directory": false, 
+      "name": "debian-testing-amd64-CD-3.iso", 
+      "server": "192.168.0.12"
+    }
+  }, 
+  {
+    "pk": 11, 
+    "model": "ftp.file", 
+    "fields": {
+      "path": "/mirror/debian-amd64", 
+      "size": 640000000, 
+      "is_directory": false, 
+      "name": "debian-testing-amd64-CD-4.iso", 
+      "server": "192.168.0.12"
+    }
+  }, 
+  {
+    "pk": 12, 
+    "model": "ftp.file", 
+    "fields": {
+      "path": "/mirror/debian-amd64", 
+      "size": 645000000, 
+      "is_directory": false, 
+      "name": "debian-testing-amd64-CD-5.iso", 
+      "server": "192.168.0.12"
+    }
+  }, 
+  {
+    "pk": 13, 
+    "model": "ftp.file", 
+    "fields": {
+      "path": "", 
+      "size": 3197000000, 
+      "is_directory": true, 
+      "name": "mirror", 
+      "server": "192.168.0.12"
     }
   }
 ]
