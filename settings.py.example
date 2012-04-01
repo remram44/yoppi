@@ -9,6 +9,20 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+INDEXER_SETTINGS = {
+    'IP_RANGES': (
+        ('160.228.152.1', '160.228.159.254'),
+    ),
+    # Minimum delay between two scans of the IP ranges
+    'SCAN_DELAY': 30*60, # 30 minutes
+    # Minimum delay between two indexations of a given FTP server
+    'INDEX_DELAY': 2*60*60, # 2 hours
+    # Whether to check for FTP servers on connecting users
+    'SEARCH_ON_USER': True,
+    # Whether to check only on users connecting from one of the IP_RANGES
+    'USER_IN_RANGE_ONLY': True,
+}
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
