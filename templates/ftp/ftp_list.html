@@ -7,31 +7,29 @@
     </tr>
     </thead>
     <tbody><!-- TODO : active ftp -->
-    {% if servers %}
-        {% for server in servers %}
-            <tr{% if active_server == server %} {% endif %}>
-                <td><a href="{{ server.get_absolute_url }}">
-                    {% if server.online %}
-                        <i class="icon-folder-open"></i>
-                    {% else %}
-                        <i class="icon-off"></i>
-                    {% endif %}{{ server.display_name }}</a></td>
-                <td>{{ server.size|filesizeformat }}</td>
-                <td>
-                    {% if server.online %}
-                        -
-                    {% else %}
-                        {{ server.display_lastonline }}
-                    {% endif %}
-                </td>
-            </tr>
-        {% endfor %}
-    {% else %}
+    {% for server in servers %}
+        <tr{% if active_server == server %} {% endif %}>
+            <td><a href="{{ server.get_absolute_url }}">
+                {% if server.online %}
+                    <i class="icon-folder-open"></i>
+                {% else %}
+                    <i class="icon-off"></i>
+                {% endif %}{{ server.display_name }}</a></td>
+            <td>{{ server.size|filesizeformat }}</td>
+            <td>
+                {% if server.online %}
+                    -
+                {% else %}
+                    {{ server.display_lastonline }}
+                {% endif %}
+            </td>
+        </tr>
+    {% empty %}
         <tr>
             <td>No servers...</td>
             <td></td>
             <td></td>
         </tr>
-    {% endif %}
+    {% endfor %}
     </tbody>
 </table>

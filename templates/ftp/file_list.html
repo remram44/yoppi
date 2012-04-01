@@ -19,23 +19,21 @@
     </thead>
     <tbody>
 
-    {% if files %}
-        {% for file in files %}
-            <tr>
-                <td>{% if file.is_directory %}
-                    <a href="{{ file.get_absolute_url }}"><i class="icon-folder-close"></i>
-                {% else %}
-                    <a href="{{ file.get_absolute_url }}"><i class="icon-file"></i>
-                {% endif %}
-                    {{ file.name }}</a></td>
-                <td width="100" align="right">{{ file.size|filesizeformat }}</td>
-            </tr>
-        {% endfor %}
-    {% else %}
+    {% for file in files %}
+        <tr>
+            <td>{% if file.is_directory %}
+                <a href="{{ file.get_absolute_url }}"><i class="icon-folder-close"></i>
+            {% else %}
+                <a href="{{ file.get_absolute_url }}"><i class="icon-file"></i>
+            {% endif %}
+                {{ file.name }}</a></td>
+            <td width="100" align="right">{{ file.size|filesizeformat }}</td>
+        </tr>
+    {% empty %}
         <tr>
             <td>No files to show</td>
             <td></td>
         </tr>
-    {% endif %}
+    {% endfor %}
     </tbody>
 </table>
