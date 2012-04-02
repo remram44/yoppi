@@ -6,8 +6,7 @@ class BasicTest(TestCase):
 
     def test_servers_list(self):
         # Query the index
-        client = Client()
-        response = client.get('/')
+        response = self.client.get('/')
 
         # Get the servers passed to the templates
         servers = response.context['servers']
@@ -18,7 +17,6 @@ class BasicTest(TestCase):
         self.assertEqual(names, [u"192.168.0.12", u"Madjar's bazaar", u"Remram's room"])
 
     def test_files_list(self):
-        client = Client()
         expected_files = [
             ('/server/192.168.0.12', [
                 'mirror'
@@ -38,19 +36,17 @@ class BasicTest(TestCase):
         ]
 
         for uri, exp in expected_files:
-            response = client.get(uri)
+            response = self.client.get(uri)
             files = response.context['files']
             names = [e.name for e in files]
             self.assertEqual(names, exp)
 
     def test_search(self):
-        client = Client()
-
-        response = client.get('/search/?query=paris')
+        response = self.client.get('/search/?query=paris')
         self.assertEqual(len(response.context['files']), 1)
 
-        response = client.get('/search/?query=testing')
+        response = self.client.get('/search/?query=testing')
         self.assertEqual(len(response.context['files']), 5)
 
-        response = client.get('/search/', follow=False)
+        response = self.client.get('/search/', follow=False)
         self.assertEqual(response.status_code, 302)
