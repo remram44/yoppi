@@ -1,19 +1,22 @@
 from django.db import models
 import math
-import datetime
+from datetime import datetime
 
 
 class FtpServer(models.Model):
-    address = models.CharField("server's DNS name or IP address", primary_key=True, max_length=200)
-    name = models.CharField("optionnal readable name", max_length=30, blank=True)
-    online = models.BooleanField()
-    size = models.IntegerField()
-    last_online = models.DateTimeField()
+    address = models.CharField(
+            "server's DNS name or IP address",
+            primary_key=True, max_length=200)
+    name = models.CharField(
+            "optionnal readable name", max_length=30, blank=True, default='')
+    online = models.BooleanField(default=True)
+    size = models.IntegerField(default=0)
+    last_online = models.DateTimeField(default=lambda: datetime.now())
     # Either NULL (not indexing) or the time when the indexing process began
     # This field has no impact on the users but is used to prevent two
     # concurrent processes from indexing the same server
     indexing = models.DateTimeField(
-            "indexing start date or null", null=True, default=False)
+            "indexing start date or null", null=True, default=None)
 
     # TODO : Locale-dependent
     _times = (
@@ -38,7 +41,7 @@ class FtpServer(models.Model):
         return ('ftp.views.server', (self.address, ''))
 
     def display_lastonline(self):
-        t = (datetime.datetime.now() - self.last_online).total_seconds()
+        t = (datetime.now() - self.last_online).total_seconds()
         last_label = ''
         for length, label in FtpServer._times:
             if t > length:
