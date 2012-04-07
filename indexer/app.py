@@ -1,11 +1,48 @@
 from ftp.models import FtpServer
 from models import IndexerParam
 from iptools import IPRange
+from walk_ftp import walk_ftp
+
+from django.db import IntegrityError
 
 from exceptions import IOError
 from datetime import datetime
 from ftplib import FTP
 from sys import stdout
+
+
+class ServerIndexingLock:
+    def __init__(self, address):
+        self.address = address
+
+    def __enter__(self):
+        # Try to create a FtpServer
+        try:
+            self.server = FtpServer(
+                    address=self.address,
+                    online=True, last_online=datetime.now(),
+                    indexing=datetime.now())
+            self.server.save(force_insert=True)
+            return self.server
+        # It already exists -- try to update it
+        except IntegrityError:
+            self.server = None
+            # Try to lock it
+            if (FtpServer.objects.filter(indexing=None, address=self.address)
+                    .update(indexing=datetime.now()) == 0):
+                return None
+            else:
+                self.server = FtpServer.objects.get(address=self.address)
+                self.server.online = True
+                self.server.last_online = datetime.now()
+                self.server.indexing = datetime.now()
+                self.server.save()
+                return self.server
+
+    def __exit__(self, type, value, traceback):
+        if self.server != None:
+            self.server.indexing = None
+            self.server.save()
 
 
 class Indexer:
@@ -23,7 +60,7 @@ class Indexer:
         self.timeout = TIMEOUT
 
     # Scan an IP range
-    def scan(self, min_ip, max_ip, verbose=3):
+    def scan(self, min_ip, max_ip, verbose=1):
         range = IPRange(min_ip, max_ip)
         found = 0
         for ip in range:
@@ -68,24 +105,42 @@ class Indexer:
                         address=address,
                         online=True, last_online=datetime.now())
                     server.save()
-        return found
-
-    def _index_rec(self, address, ftp, path):
-        files = ftp.nlst(path)
-        for file in files:
-            print file
+        return found            
 
     # Index a server
-    def index(self, address):
+    def index(self, address, verbose=1):
         try:
             ftp = FTP(timeout=self.timeout)
             ftp.connect(address)
-            ftp.login()
-            self._index_rec(address, ftp, "/")
-            ftp.close()
-            return True
+        # Server offline
         except IOError:
+            try:
+                server = FtpServer.objects.get(address=address)
+                if server.online:
+                    server.online = False
+                    server.save()
+            except FtpServer.DoesNotExist:
+                if verbose >= 1:
+                    stdout.write("couldn't connect to %s\n" % address)
             return False
+
+        with ServerIndexingLock(address) as server:
+            if server == None:
+                if verbose >= 1:
+                    stdout.write("%s already being indexed\n" % address)
+                return False
+
+            try:
+                ftp.login()
+                nb_files, total_size = walk_ftp(server, ftp)
+                ftp.close()
+                if verbose >= 1:
+                    stdout.write("%d files found on %s, %d b\n" %
+                            (nb_files, address, total_size))
+                return True
+            except IOError as e:
+                stdout.write("I/O error!\n%s\n" % e)
+                return False
 
     def run(self, args):
         pass
