@@ -9,6 +9,11 @@ class FtpServer(models.Model):
     online = models.BooleanField()
     size = models.IntegerField()
     last_online = models.DateTimeField()
+    # Either NULL (not indexing) or the time when the indexing process began
+    # This field has no impact on the users but is used to prevent two
+    # concurrent processes from indexing the same server
+    indexing = models.DateTimeField(
+            "indexing start date or null", null=True, default=False)
 
     # TODO : Locale-dependent
     _times = (
