@@ -35,7 +35,7 @@ def server(request, address, path=''):
     if path != '' and path[-1] == '/':
         path = path[:-1]
     server = get_object_or_404(FtpServer, address=address)
-    
+
     hierarchy = decompose_path(server.address, path)
 
     files = server.files.filter(path=path).order_by('name')
