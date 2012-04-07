@@ -1,5 +1,4 @@
 from ftp.models import FtpServer
-from models import IndexerParam
 from iptools import IPRange
 from walk_ftp import walk_ftp
 
