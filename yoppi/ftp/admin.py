@@ -1,4 +1,4 @@
-from ftp.models import FtpServer, File
+from yoppi.ftp.models import FtpServer, File
 from django.contrib import admin
 
 admin.site.register(FtpServer)

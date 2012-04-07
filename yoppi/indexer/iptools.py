@@ -1,12 +1,7 @@
-from functools import total_ordering
-import bisect
-
-
 class InvalidAddress(ValueError):
     pass
 
 
-@total_ordering
 class IP:
     def __init__(self, i):
         if isinstance(i, IP):
@@ -61,7 +56,6 @@ class IPRangeIterator:
             return IP(self.pos-1)
 
 
-@total_ordering
 class IPRange:
     def __init__(self, first, last=None):
         if (not last and (type(first) == list or type(first) == tuple) and

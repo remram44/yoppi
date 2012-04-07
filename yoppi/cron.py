@@ -10,7 +10,7 @@ except KeyError:
     settings = {}
 
 
-from indexer.app import Indexer
+from yoppi.indexer.app import Indexer
 import sys
 
 i = Indexer(**settings)

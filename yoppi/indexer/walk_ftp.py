@@ -1,4 +1,4 @@
-from ftp.models import File
+from yoppi.ftp.models import File
 
 import re
 
@@ -44,8 +44,6 @@ def walk_ftp(server, connection, path='/'):
 
     for file in files:
         nb_files += 1
-
-        print "%s : %s (%s)" % (path, file.name, (file.is_directory and "d") or "f")
 
         if file.is_directory:
             n, file.size = walk_ftp(server, connection, path + '/' + file.name)

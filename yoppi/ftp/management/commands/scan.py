@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
-from indexer.app import Indexer
-from ftp.models import FtpServer
+from yoppi.indexer.app import Indexer
+from yoppi.ftp.models import FtpServer
 
 from django.conf import settings as django_settings
 

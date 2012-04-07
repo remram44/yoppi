@@ -1,6 +1,6 @@
 from django.db import models
 import math
-from datetime import datetime
+from django.utils import timezone
 
 
 class FtpServer(models.Model):
@@ -11,7 +11,7 @@ class FtpServer(models.Model):
             "optionnal readable name", max_length=30, blank=True, default='')
     online = models.BooleanField(default=True)
     size = models.IntegerField(default=0)
-    last_online = models.DateTimeField(default=lambda: datetime.now())
+    last_online = models.DateTimeField(default=lambda: timezone.now())
     # Either NULL (not indexing) or the time when the indexing process began
     # This field has no impact on the users but is used to prevent two
     # concurrent processes from indexing the same server
@@ -38,10 +38,10 @@ class FtpServer(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('ftp.views.server', (self.address, ''))
+        return ('yoppi.ftp.views.server', (self.address, ''))
 
     def display_lastonline(self):
-        t = (datetime.now() - self.last_online).total_seconds()
+        t = (timezone.now() - self.last_online).total_seconds()
         last_label = ''
         for length, label in FtpServer._times:
             if t > length:
@@ -65,9 +65,9 @@ class File(models.Model):
     @models.permalink
     def get_absolute_url(self):
         if self.is_directory:
-            return ('ftp.views.server', (self.server.address, self.fullpath()))
+            return ('yoppi.ftp.views.server', (self.server.address, self.fullpath()))
         else:
-            return ('ftp.views.download', (self.server.address, self.fullpath()))
+            return ('yoppi.ftp.views.download', (self.server.address, self.fullpath()))
 
     def fullpath(self):
         return self.path + u"/" + self.name
