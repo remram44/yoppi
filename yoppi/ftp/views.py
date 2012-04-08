@@ -41,7 +41,7 @@ def server(request, address, path=''):
 
     hierarchy = decompose_path(server.address, path)
 
-    files = server.files.filter(path=path).order_by('name')
+    files = server.files.filter(path=path).order_by('-is_directory', 'name')
 
     return render(
         request,
@@ -72,7 +72,7 @@ def search(request):
     try:
         query = request.GET['query']
         # TODO : A simple contains is probably not enough
-        files = File.objects.filter(name__icontains=query).order_by('name')
+        files = File.objects.filter(name__icontains=query).order_by('-is_directory', 'name')
         return render(
             request,
             'ftp/search.html',
