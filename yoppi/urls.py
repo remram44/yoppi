@@ -5,7 +5,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('yoppi',
-    url(r"^$", "ftp.views.index"),
+    url(r"^$", "ftp.views.index", name="index"),
     url(r"^server/(?P<address>[a-z0-9_.-]+)(?P<path>(/.*)?)$", "ftp.views.server"),
     url(r"^search/$", "ftp.views.search"),
     url(r"^download/(?P<address>[a-z0-9_.-]+)(?P<path>(/.*)?)$", "ftp.views.download"),
