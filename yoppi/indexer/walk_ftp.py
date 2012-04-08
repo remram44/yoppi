@@ -5,7 +5,7 @@ import re
 class RemoteFile:
     # drwxr-xr-x 1 ftp ftp  0 Mar 11 13:49 stuff
     # -r--r--r-- 1 ftp ftp 57 Feb 20  2012 smthg.zip
-    _line_regex = re.compile(r"^([a-z-]{10})\s+[0-9]+\s+([^\s]+)\s+([^\s]+)\s+([0-9]+)\s+([A-Za-z]+ [0-9]{1,2}\s+[0-9:]+)\s+(.+)$")
+    _line_regex = re.compile(r"^([a-z-]{10})\s+[0-9]+\s+([^\s]+)\s+([^\s]+)\s+([0-9]+)\s+([A-Za-z]+ +[0-9]{1,2}\s+[0-9:]+)\s+(.+)$")
     # Groups:
     #   1: permissions
     #   2: user
@@ -16,6 +16,8 @@ class RemoteFile:
 
     def __init__(self, line):
         m = self._line_regex.match(line)
+        if m == None:
+            raise IOError("invalid LIST format\n")
         self.is_directory = m.group(1)[0] == "d"
         self.size = int(m.group(4))
         self.name = m.group(6)
