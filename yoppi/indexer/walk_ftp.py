@@ -40,8 +40,6 @@ def walk_ftp(server, connection, path='/'):
     nb_files = 0
     total_size = 0
 
-    # TODO : purge deleted files
-
     for file in files:
         nb_files += 1
 
@@ -57,6 +55,7 @@ def walk_ftp(server, connection, path='/'):
                     name=file.name, path=path)
             ftp_file.is_directory = file.is_directory
             ftp_file.size = file.size
+            ftp_file.old = False
             ftp_file.save()
         except File.DoesNotExist:
             ftp_file = File(
@@ -65,5 +64,7 @@ def walk_ftp(server, connection, path='/'):
                     is_directory=file.is_directory,
                     size=file.size)
             ftp_file.save()
+
+    server.size = total_size
 
     return nb_files, total_size

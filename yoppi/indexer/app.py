@@ -1,4 +1,4 @@
-from yoppi.ftp.models import FtpServer
+from yoppi.ftp.models import FtpServer, File
 from iptools import IPRange
 from walk_ftp import walk_ftp
 
@@ -131,7 +131,9 @@ class Indexer:
 
             try:
                 ftp.login()
+                File.objects.filter(server=server).update(old=True)
                 nb_files, total_size = walk_ftp(server, ftp)
+                File.objects.filter(server=server, old=True).delete()
                 ftp.close()
                 if verbose >= 1:
                     stdout.write("%d files found on %s, %d b\n" %

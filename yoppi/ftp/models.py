@@ -58,6 +58,7 @@ class File(models.Model):
     path = models.CharField(max_length=300, blank=True) # Never ends with '/'
     is_directory = models.BooleanField()
     size = models.IntegerField()
+    old = models.BooleanField(default=False)
 
     def __unicode__(self):
         return u"%s:%s/%s" % (unicode(self.server), self.path, self.name)
