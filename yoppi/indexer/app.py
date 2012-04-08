@@ -1,5 +1,5 @@
 from yoppi.ftp.models import FtpServer, File
-from iptools import IPRange
+from iptools import IP, IPRange
 from walk_ftp import walk_ftp
 
 from django.db import IntegrityError
@@ -104,10 +104,15 @@ class Indexer:
                         address=address,
                         online=True, last_online=timezone.now())
                     server.save()
-        return found            
+        return found
 
     # Index a server
     def index(self, address, verbose=1):
+        # 'address' must be a valid IP address
+        if not isinstance(address, IP):
+            address = IP(address)
+        address = str(address)
+
         try:
             ftp = FTP(timeout=self.timeout)
             ftp.connect(address)
@@ -131,13 +136,32 @@ class Indexer:
 
             try:
                 ftp.login()
-                File.objects.filter(server=server).update(old=True)
-                nb_files, total_size = walk_ftp(server, ftp)
-                File.objects.filter(server=server, old=True).delete()
+
+                # Fetch all the files currently known
+                files = list(File.objects.filter(server=server))
+                files = dict((f.fullpath(), f) for f in files)
+
+                # Recursively walk the FTP
+                to_insert, to_delete, nb_files, total_size = \
+                        walk_ftp(server, ftp, files)
+                # The file that were not found need to be deleted as well
+                to_delete += [f.id for f in files.itervalues()]
+
+                # Update the files in the database
+                File.objects.filter(id__in=to_delete).delete()
+                File.objects.bulk_create(to_insert)
+
+                # Update the server
+                server.size = total_size
+                # It will get save()'d when we exit the 'with' block
+
                 ftp.close()
                 if verbose >= 1:
                     stdout.write("%d files found on %s, %d b\n" %
                             (nb_files, address, total_size))
+                if verbose >= 2:
+                    stdout.write("%d insertions, %s deletions\n" %
+                            (len(to_insert), len(to_delete)))
                 return True
             except IOError as e:
                 stdout.write("I/O error!\n%s\n" % e)
