@@ -72,7 +72,7 @@ def search(request):
     try:
         query = request.GET['query']
         # TODO : A simple contains is probably not enough
-        files = File.objects.filter(name__contains=query).order_by('name')
+        files = File.objects.filter(name__icontains=query).order_by('name')
         return render(
             request,
             'ftp/search.html',
