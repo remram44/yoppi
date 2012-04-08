@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block base_content %}
+<div class="span3">
+    {% include "ftp/ftp_list.html" %}
+</div>
+<div class="span9">
+    {% block content %}{% endblock %}
+</div>
+{% endblock %}

@@ -80,3 +80,17 @@ def search(request):
         )
     except KeyError:
         return redirect('yoppi.ftp.views.index')
+
+
+def error_404(request):
+    return render(
+        request,
+        '404.html',
+        status=404)
+
+
+def error_500(request):
+    return render(
+        request,
+        '500.html',
+        status=500)

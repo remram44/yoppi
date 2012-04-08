@@ -16,3 +16,6 @@ urlpatterns = patterns('yoppi',
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
 )
+
+handler404 = 'yoppi.ftp.views.error_404'
+handler500 = 'yoppi.ftp.views.error_500'
