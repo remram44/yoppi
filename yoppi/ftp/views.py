@@ -1,5 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.urlresolvers import reverse
+from django.http import HttpResponse, Http404
+from django.utils.encoding import smart_str
 from yoppi.ftp.models import FtpServer, File
 
 
@@ -46,6 +48,24 @@ def server(request, address, path=''):
         'ftp/server.html',
         {'servers': all_servers(), 'active_server': server, 'files': list(files), 'path': path, 'hierarchy': hierarchy}
     )
+
+
+def download(request, address, path):
+    server = get_object_or_404(FtpServer, address=address)
+
+    sep = path.rfind('/')
+    if sep == -1:
+        raise Http404
+    filename = path
+    path, name = filename[:sep], filename[sep+1:]
+    file = get_object_or_404(File, server=server, path=path, name=name, is_directory=False)
+
+    # TODO : download statistics?
+
+    response = HttpResponse(status=302)
+    response['Cache-control'] = 'no-cache'
+    response['Location'] = smart_str('ftp://%s%s' % (server.address, filename))
+    return response
 
 
 def search(request):

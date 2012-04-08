@@ -8,6 +8,7 @@ urlpatterns = patterns('yoppi',
     url(r"^$", "ftp.views.index"),
     url(r"^server/(?P<address>[a-z0-9_.-]+)(?P<path>(/.*)?)$", "ftp.views.server"),
     url(r"^search/$", "ftp.views.search"),
+    url(r"^download/(?P<address>[a-z0-9_.-]+)(?P<path>(/.*)?)$", "ftp.views.download"),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

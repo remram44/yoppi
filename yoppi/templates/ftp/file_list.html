@@ -21,12 +21,12 @@
 
     {% for file in files %}
         <tr>
-            <td>{% if file.is_directory %}
-                <a href="{{ file.get_absolute_url }}"><i class="icon-folder-close"></i>
-            {% else %}
-                <a href="{{ file.get_absolute_url }}"><i class="icon-file"></i>
-            {% endif %}
-                {{ file.name }}</a></td>
+            <td>
+              <a href="{{ file.get_absolute_url }}">
+                <i class="{% if file.is_directory %}icon-folder-close{% else %}icon-file{% endif %}"></i>
+                {{ file.name }}
+              </a>
+            </td>
             <td width="100" align="right">{{ file.size|filesizeformat }}</td>
         </tr>
     {% empty %}
