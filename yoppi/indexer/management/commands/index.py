@@ -25,4 +25,4 @@ class Command(LabelCommand):
         try:
             self.indexer.index(label)
         except ValueError as e:
-            raise CommandError("ValueError: %s" % e)
+            raise CommandError("%s: %s" % (e.__class__.__name__, e))

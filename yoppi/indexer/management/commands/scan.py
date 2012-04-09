@@ -26,4 +26,4 @@ class Command(BaseCommand):
             else:
                 raise CommandError("Expected 2 parameters, got %d" % len(args))
         except ValueError as e:
-            raise CommandError("ValueError: %s" % e)
+            raise CommandError("%s: %s" % (e.__class__.__name__, e))
