@@ -139,6 +139,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'south',
     'yoppi.ftp',
+    'yoppi.indexer',
 )
 
 # A sample logging configuration. The only tangible logging
