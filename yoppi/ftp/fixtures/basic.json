@@ -6,7 +6,7 @@
       "size": 1350025, 
       "indexing": null, 
       "name": "Madjar's bazaar", 
-      "last_online": "2012-03-31T23:34:43", 
+      "last_online": "2012-03-31T23:34:43Z",
       "online": true
     }
   }, 
@@ -17,7 +17,7 @@
       "size": 700000958, 
       "indexing": null, 
       "name": "Remram's room", 
-      "last_online": "2012-03-31T23:35:29", 
+      "last_online": "2012-03-31T23:35:29Z",
       "online": false
     }
   }, 
@@ -28,7 +28,7 @@
       "size": 3197000000, 
       "indexing": null, 
       "name": "", 
-      "last_online": "2012-02-28T16:44:58", 
+      "last_online": "2012-02-28T16:44:58Z",
       "online": true
     }
   }, 
