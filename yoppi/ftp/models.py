@@ -56,6 +56,14 @@ class FtpServer(models.Model):
         return "%d %s" % (int(t), last_label)
 
 
+ICONS = {
+    'avi': 'film',
+    'mkv': 'film',
+    'mp3': 'music',
+    'ogg': 'music',
+}
+
+
 class File(models.Model):
     server = models.ForeignKey(FtpServer, related_name='files')
     name = models.CharField(max_length=200)
@@ -75,3 +83,10 @@ class File(models.Model):
 
     def fullpath(self):
         return self.path + u"/" + self.name
+
+    def icon(self):
+        if self.is_directory:
+            return 'folder-open'
+        else:
+            ext = self.name.rsplit('.', 1)[-1]
+            return ICONS.get(ext, 'file')
