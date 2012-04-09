@@ -1,4 +1,6 @@
+from django.test import TestCase
 from django.utils import unittest
+import mock
 from iptools import IP, IPRange, IPSet, InvalidAddress
 
 
@@ -70,6 +72,38 @@ class TestIPTools(unittest.TestCase):
         self.assertEqual(len(set.ranges), 2)
         set.add(['170.2.3.5', '193.2.3.4'])
         self.assertEqual(len(set.ranges), 1)
+
+
+class IndexerTestCase(TestCase):
+    def setUp(self):
+        self.patcher = mock.patch('ftplib.FTP')
+        self.FTP = self.patcher.start()
+
+        def fake_dir(path, callback):
+            if path == '/':
+                callback('-r--r--r-- 1 ftp ftp 57 Feb 20  2012 smthg.zip')
+                callback('drwxr-xr-x 1 ftp ftp  0 Mar 11 13:49 stuff')
+            elif path == '/stuff':
+                callback('-r--r--r-- 1 ftp ftp 1000 Feb 20  2012 mysterious.zip')
+
+        self.FTP().dir = fake_dir
+
+
+    def tearDown(self):
+        self.patcher.stop()
+
+    def test_basic_index(self):
+        from yoppi.indexer.app import Indexer
+        indexer = Indexer()
+        indexer.index(u'tardis')
+
+        from yoppi.ftp.models import FtpServer, File
+        ftp = FtpServer.objects.get()
+        self.assertEqual(ftp.address, u'tardis')
+        self.assertEqual(ftp.size, 1057)
+
+        files = ftp.files.all()
+        self.assertEqual(len(files), 3)
 
 
 if __name__ == '__main__':

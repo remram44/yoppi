@@ -6,7 +6,7 @@ from django.db import IntegrityError
 from django.utils import timezone
 
 from exceptions import IOError
-from ftplib import FTP
+import ftplib
 from sys import stdout
 
 
@@ -65,7 +65,7 @@ class Indexer:
         for ip in range:
             address = str(ip)
             try:
-                ftp = FTP(timeout=self.timeout)
+                ftp = ftplib.FTP(timeout=self.timeout)
                 ftp.connect(address)
                 ftp.close()
             # Server offline
@@ -109,7 +109,7 @@ class Indexer:
     # Index a server
     def index(self, address, verbose=1):
         try:
-            ftp = FTP(timeout=self.timeout)
+            ftp = ftplib.FTP(timeout=self.timeout)
             ftp.connect(address)
         # Server offline
         except IOError:
