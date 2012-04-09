@@ -6,7 +6,7 @@ class IP:
     def __init__(self, i):
         if isinstance(i, IP):
             self.num = i.num
-        elif type(i) == str:
+        elif isinstance(i, basestring):
             c = i.split('.')
             if len(c) != 4:
                 raise InvalidAddress("Not in IPv4 format")
@@ -18,7 +18,7 @@ class IP:
                 if v < 0 or v >= 256:
                     raise InvalidAddress("Byte not in [0-255]")
             self.num = ((c[0]*256 + c[1])*256 + c[2])*256 + c[3]
-        elif type(i) == int or type(i) == long:
+        elif isinstance(i, (int, long)):
             self.num = i
         else:
             raise TypeError("Expected str or int, got %s" % type(i))

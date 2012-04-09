@@ -65,7 +65,7 @@ class Indexer:
             names = socket.gethostbyaddr(address)
             return names[0]
         except socket.herror:
-            return None
+            return ''
 
     # Scan an IP range
     def scan(self, min_ip, max_ip, verbose=1):

@@ -95,11 +95,11 @@ class IndexerTestCase(TestCase):
     def test_basic_index(self):
         from yoppi.indexer.app import Indexer
         indexer = Indexer()
-        indexer.index(u'tardis')
+        indexer.index('10.9.8.7')
 
         from yoppi.ftp.models import FtpServer, File
         ftp = FtpServer.objects.get()
-        self.assertEqual(ftp.address, u'tardis')
+        self.assertEqual(ftp.address, '10.9.8.7')
         self.assertEqual(ftp.size, 1057)
 
         files = ftp.files.all()
