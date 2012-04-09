@@ -80,7 +80,7 @@ class IPRange:
     def contains(self, ip):
         if not isinstance(ip, IP):
             ip = IP(ip)
-        return self.first <= ip and ip <= self.last
+        return self.first < ip < self.last or ip in (self.first, self.last)
 
     def __iter__(self):
         return IPRangeIterator(self)
