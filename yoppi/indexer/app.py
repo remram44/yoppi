@@ -5,20 +5,22 @@ from walk_ftp import walk_ftp
 from django.db import IntegrityError
 from django.utils import timezone
 
+import socket
 from exceptions import IOError
 from ftplib import FTP
 from sys import stdout
 
 
 class ServerIndexingLock:
-    def __init__(self, address):
+    def __init__(self, address, name=None):
         self.address = address
+        self.name = name
 
     def __enter__(self):
         # Try to create a FtpServer
         try:
             self.server = FtpServer(
-                    address=self.address,
+                    address=self.address, name=self.name,
                     online=True, last_online=timezone.now(),
                     indexing=timezone.now())
             self.server.save(force_insert=True)
@@ -57,6 +59,13 @@ class Indexer:
         self.search_on_user = SEARCH_ON_USER
         self.user_in_range_only = USER_IN_RANGE_ONLY
         self.timeout = TIMEOUT
+
+    def _defaultServerName(self, address):
+        try:
+            names = socket.gethostbyaddr(address)
+            return names[0]
+        except socket.herror:
+            return None
 
     # Scan an IP range
     def scan(self, min_ip, max_ip, verbose=1):
@@ -101,7 +110,7 @@ class Indexer:
                     if verbose >= 1:
                         stdout.write("discovered new server at %s\n" % address)
                     server = FtpServer(
-                        address=address,
+                        address=address, name=self._defaultServerName(address),
                         online=True, last_online=timezone.now())
                     server.save()
         return found
@@ -128,7 +137,9 @@ class Indexer:
                     stdout.write("couldn't connect to %s\n" % address)
             return False
 
-        with ServerIndexingLock(address) as server:
+        name = self._defaultServerName(address)
+
+        with ServerIndexingLock(address, name) as server:
             if server == None:
                 if verbose >= 1:
                     stdout.write("%s already being indexed\n" % address)
