@@ -40,8 +40,12 @@ class FtpServer(models.Model):
     def get_absolute_url(self):
         return ('yoppi.ftp.views.server', (self.address, ''))
 
+    def _seconds_since_lastonline(self):
+        td = timezone.now() - self.last_online
+        return td.seconds + td.days * 24 * 3600
+
     def display_lastonline(self):
-        t = (timezone.now() - self.last_online).total_seconds()
+        t = self._seconds_since_lastonline()
         last_label = ''
         for length, label in FtpServer._times:
             if t > length:
