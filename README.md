@@ -2,6 +2,8 @@
 
 Yoppi is an automatic FTP indexer written in Python.
 
+[![Build Status](https://secure.travis-ci.org/supelec-rezo/yoppi.png?branch=master)](http://travis-ci.org/supelec-rezo/yoppi)
+
 ## Database migrations
 
 We're now using south for the database migrations.
