@@ -1,24 +1,26 @@
 from yoppi.ftp.models import FtpServer, File
-from iptools import IPRange
+from iptools import IP, IPRange
 from walk_ftp import walk_ftp
 
 from django.db import IntegrityError
 from django.utils import timezone
 
+import socket
 from exceptions import IOError
 import ftplib
 from sys import stdout
 
 
 class ServerIndexingLock:
-    def __init__(self, address):
+    def __init__(self, address, name=None):
         self.address = address
+        self.name = name
 
     def __enter__(self):
         # Try to create a FtpServer
         try:
             self.server = FtpServer(
-                    address=self.address,
+                    address=self.address, name=self.name,
                     online=True, last_online=timezone.now(),
                     indexing=timezone.now())
             self.server.save(force_insert=True)
@@ -57,6 +59,13 @@ class Indexer:
         self.search_on_user = SEARCH_ON_USER
         self.user_in_range_only = USER_IN_RANGE_ONLY
         self.timeout = TIMEOUT
+
+    def _defaultServerName(self, address):
+        try:
+            names = socket.gethostbyaddr(address)
+            return names[0]
+        except socket.herror:
+            return None
 
     # Scan an IP range
     def scan(self, min_ip, max_ip, verbose=1):
@@ -101,13 +110,18 @@ class Indexer:
                     if verbose >= 1:
                         stdout.write("discovered new server at %s\n" % address)
                     server = FtpServer(
-                        address=address,
+                        address=address, name=self._defaultServerName(address),
                         online=True, last_online=timezone.now())
                     server.save()
-        return found            
+        return found
 
     # Index a server
     def index(self, address, verbose=1):
+        # 'address' must be a valid IP address
+        if not isinstance(address, IP):
+            address = IP(address)
+        address = str(address)
+
         try:
             ftp = ftplib.FTP(timeout=self.timeout)
             ftp.connect(address)
@@ -123,7 +137,9 @@ class Indexer:
                     stdout.write("couldn't connect to %s\n" % address)
             return False
 
-        with ServerIndexingLock(address) as server:
+        name = self._defaultServerName(address)
+
+        with ServerIndexingLock(address, name) as server:
             if server == None:
                 if verbose >= 1:
                     stdout.write("%s already being indexed\n" % address)
@@ -131,13 +147,32 @@ class Indexer:
 
             try:
                 ftp.login()
-                File.objects.filter(server=server).update(old=True)
-                nb_files, total_size = walk_ftp(server, ftp)
-                File.objects.filter(server=server, old=True).delete()
+
+                # Fetch all the files currently known
+                files = list(File.objects.filter(server=server))
+                files = dict((f.fullpath(), f) for f in files)
+
+                # Recursively walk the FTP
+                to_insert, to_delete, nb_files, total_size = \
+                        walk_ftp(server, ftp, files)
+                # The file that were not found need to be deleted as well
+                to_delete += [f.id for f in files.itervalues()]
+
+                # Update the files in the database
+                File.objects.filter(id__in=to_delete).delete()
+                File.objects.bulk_create(to_insert)
+
+                # Update the server
+                server.size = total_size
+                # It will get save()'d when we exit the 'with' block
+
                 ftp.close()
                 if verbose >= 1:
                     stdout.write("%d files found on %s, %d b\n" %
                             (nb_files, address, total_size))
+                if verbose >= 2:
+                    stdout.write("%d insertions, %s deletions\n" %
+                            (len(to_insert), len(to_delete)))
                 return True
             except IOError as e:
                 stdout.write("I/O error!\n%s\n" % e)
