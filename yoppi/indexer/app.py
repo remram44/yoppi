@@ -1,6 +1,7 @@
 from yoppi.ftp.models import FtpServer, File
 from iptools import IP, IPRange
 from walk_ftp import walk_ftp
+from yoppi import settings
 
 from django.db import IntegrityError
 from django.utils import timezone
@@ -160,7 +161,13 @@ class Indexer:
 
                 # Update the files in the database
                 File.objects.filter(id__in=to_delete).delete()
-                File.objects.bulk_create(to_insert)
+
+                if 'sqlite' in settings.DATABASES['default']['ENGINE']:
+                    BULK_SIZE = 100
+                    for i in range(0, len(to_insert), BULK_SIZE):
+                        File.objects.bulk_create(to_insert[i:i + BULK_SIZE])
+                else:
+                    File.objects.bulk_create(to_insert)
 
                 # Update the server
                 server.size = total_size
