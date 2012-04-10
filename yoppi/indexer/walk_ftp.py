@@ -22,8 +22,6 @@ class RemoteFile:
         self.is_directory = m.group(1)[0] == "d"
         self.size = int(m.group(4))
         self.name = m.group(6).decode('utf-8')
-        if 'hatsune_miku vocaloid.' in self.name:
-            print line
 
     def __eq__(self, other):
         if not isinstance(other, RemoteFile) and not isinstance(other, File):
