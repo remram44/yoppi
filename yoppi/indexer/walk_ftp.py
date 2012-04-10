@@ -2,6 +2,7 @@ from yoppi.ftp.models import File
 
 import re
 
+
 class RemoteFile:
     # drwxr-xr-x 1 ftp ftp  0 Mar 11 13:49 stuff
     # -r--r--r-- 1 ftp ftp 57 Feb 20  2012 smthg.zip
@@ -20,7 +21,9 @@ class RemoteFile:
             raise IOError("invalid LIST format\n")
         self.is_directory = m.group(1)[0] == "d"
         self.size = int(m.group(4))
-        self.name = m.group(6)
+        self.name = m.group(6).decode('utf-8')
+        if 'hatsune_miku vocaloid.' in self.name:
+            print line
 
     def __eq__(self, other):
         if not isinstance(other, RemoteFile) and not isinstance(other, File):
@@ -41,19 +44,17 @@ class RemoteFile:
     def __str__(self):
         return self.name
 
-def walk_ftp(server, connection, db_files, path='/'):
-    if path == '/':
-        path = ''
 
+def walk_ftp(server, connection, db_files, path='/'):
     files = []
 
     def callback(line):
         files.append(RemoteFile(line))
 
-    if path == '':
-        connection.dir('/', callback)
-    else:
-        connection.dir(path, callback)
+    connection.dir(path, callback)
+
+    if path == '/':
+        path = ''
 
     nb_files = 0
     total_size = 0
@@ -67,7 +68,8 @@ def walk_ftp(server, connection, db_files, path='/'):
         # Recursively walk over subdirectories
         if file.is_directory:
             r_to_insert, r_to_delete, r_nb_files, file.size = \
-                    walk_ftp(server, connection, db_files, path + '/' + file.name)
+                    walk_ftp(server, connection, db_files,
+                        path + '/' + file.name.encode('utf-8'))
             to_insert += r_to_insert
             to_delete += r_to_delete
             nb_files += r_nb_files
@@ -75,7 +77,7 @@ def walk_ftp(server, connection, db_files, path='/'):
         total_size += file.size
 
         try:
-            ftp_file = db_files.pop(path + '/' + file.name)
+            ftp_file = db_files.pop(path.decode('utf-8') + u'/' + file.name)
         except KeyError:
             # New file -- we have to insert it
             to_insert.append(file.toFile(server, path))

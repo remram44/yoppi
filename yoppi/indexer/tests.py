@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.test import TestCase
 from django.utils import unittest
 import mock
@@ -84,26 +85,39 @@ class IndexerTestCase(TestCase):
                 callback('-r--r--r-- 1 ftp ftp 57 Feb 20  2012 smthg.zip')
                 callback('drwxr-xr-x 1 ftp ftp  0 Mar 11 13:49 stuff')
             elif path == '/stuff':
-                callback('-r--r--r-- 1 ftp ftp 1000 Feb 20  2012 mysterious.zip')
+                callback('-r--r--r-- 1 ftp ftp 1000 Feb 20  2012 mysterioüs.zip')
 
         self.FTP().dir = fake_dir
-
 
     def tearDown(self):
         self.patcher.stop()
 
-    def test_basic_index(self):
+    def _get_indexer(self):
         from yoppi.indexer.app import Indexer
-        indexer = Indexer()
+        return Indexer()
+
+    def test_basic_index(self):
+        indexer = self._get_indexer()
         indexer.index('10.9.8.7')
 
-        from yoppi.ftp.models import FtpServer, File
+        from yoppi.ftp.models import FtpServer
         ftp = FtpServer.objects.get()
         self.assertEqual(ftp.address, '10.9.8.7')
         self.assertEqual(ftp.size, 1057)
 
         files = ftp.files.all()
         self.assertEqual(len(files), 3)
+
+    def test_indexing_twice_doesnt_change_the_db(self):
+        indexer = self._get_indexer()
+        indexer.index('10.9.8.7')
+        from yoppi.ftp.models import File
+        ids = list(File.objects.values_list('id'))
+
+        indexer.index('10.9.8.7')
+        new_ids = list(File.objects.values_list('id'))
+
+        self.assertEqual(ids, new_ids)
 
 
 if __name__ == '__main__':
