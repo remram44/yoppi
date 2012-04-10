@@ -82,7 +82,7 @@ class IndexerTestCase(TestCase):
 
         def fake_dir(path, callback):
             if path == '/':
-                callback('-r--r--r-- 1 ftp ftp 57 Feb 20  2012 smthg.zip')
+                callback('-r--r--r-- 1 ftp ftp 57 Feb 20  2012  smthg.zip')
                 callback('drwxr-xr-x 1 ftp ftp  0 Mar 11 13:49 stuff')
             elif path == '/stuff':
                 callback('-r--r--r-- 1 ftp ftp 1000 Feb 20  2012 mysterioüs.zip')
@@ -118,6 +118,15 @@ class IndexerTestCase(TestCase):
         new_ids = list(File.objects.values_list('id'))
 
         self.assertEqual(ids, new_ids)
+
+    @unittest.expectedFailure
+    def test_leading_whitespace(self):
+        indexer = self._get_indexer()
+        indexer.index('10.9.8.7')
+
+        from yoppi.ftp.models import File
+        self.assertEqual(File.objects.filter(name=u' smthg.zip').count(),
+                1)
 
 
 if __name__ == '__main__':
