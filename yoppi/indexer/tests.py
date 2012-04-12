@@ -119,7 +119,6 @@ class IndexerTestCase(TestCase):
 
         self.assertEqual(ids, new_ids)
 
-    @unittest.expectedFailure
     def test_leading_whitespace(self):
         indexer = self._get_indexer()
         indexer.index('10.9.8.7')
