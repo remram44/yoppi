@@ -23,7 +23,7 @@
         <tr>
             <td>
               <a href="{{ file.get_absolute_url }}">
-                <i class="{% if file.is_directory %}icon-folder-close{% else %}icon-file{% endif %}"></i>
+                <i class="icon-{{ file.icon }}"></i>
                 {{ file.name }}
               </a>
             </td>
