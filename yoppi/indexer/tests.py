@@ -2,7 +2,7 @@
 from django.test import TestCase
 from django.utils import unittest
 import mock
-from iptools import IP, IPRange, IPSet, InvalidAddress
+from iptools import IP, IPRange, IPSet, InvalidAddress, parse_ip_ranges
 
 
 class TestIPTools(unittest.TestCase):
@@ -97,6 +97,50 @@ class TestIPTools(unittest.TestCase):
         self.assertEqual(iter.next(), IP('10.9.2.4'))
         self.assertEqual(iter.next(), IP('10.9.2.5'))
         self.assertRaises(StopIteration, iter.next)
+
+    def test_ip_range_parser(self):
+        expected = [
+            IPRange('10.8.1.1'),
+        ]
+        self.assertEqual(parse_ip_ranges(IP('10.8.1.1')).ranges, expected)
+        self.assertEqual(parse_ip_ranges('10.8.1.1').ranges, expected)
+        self.assertEqual(parse_ip_ranges(168296705).ranges, expected)
+        self.assertEqual(parse_ip_ranges(['10.8.1.1']).ranges, expected)
+        self.assertEqual(parse_ip_ranges(
+                [('10.8.1.1', '10.8.1.1')]).ranges,
+                expected)
+        expected = [
+            IPRange('10.0.0.1', '10.1.2.3')
+        ]
+        # Special case -- will print a warning
+        self.assertEqual(
+                parse_ip_ranges(('10.0.0.1', '10.1.2.3')).ranges,
+                expected)
+        self.assertEqual(
+                parse_ip_ranges([('10.0.0.1', '10.1.2.3')]).ranges,
+                expected)
+        expected = [
+            IPRange('10.0.0.1', '10.0.0.1'),
+            IPRange('10.2.3.4', '10.2.9.9'),
+        ]
+        self.assertEqual(
+                parse_ip_ranges(['10.0.0.1', ('10.2.3.4', '10.2.9.9')]).ranges,
+                expected)
+        expected = [
+            IPRange('10.0.0.1', '10.0.0.2'),
+            IPRange('10.2.3.4', '10.2.9.9'),
+        ]
+        self.assertEqual(
+                parse_ip_ranges(
+                        ['10.0.0.1', ('10.2.3.4', '10.2.9.9'), '10.0.0.2']
+                ).ranges,
+                expected)
+        self.assertEqual(
+                parse_ip_ranges([
+                        IP('10.0.0.1'), IP('10.0.0.2'),
+                        IPRange('10.2.3.4', IP('10.2.9.9'))
+                ]).ranges,
+                expected)
 
 
 class IndexerTestCase(TestCase):

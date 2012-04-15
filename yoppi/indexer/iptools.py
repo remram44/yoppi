@@ -138,3 +138,47 @@ class IPSet:
 
     def __iter__(self):
         return itertools.chain.from_iterable(self.ranges)
+
+
+def parse_ip_ranges(ranges):
+    if isinstance(ranges, IPSet):
+        return ranges
+
+    ipset = IPSet()
+
+    if isinstance(ranges, (IPRange, IP, str, long, int)):
+        ipset.add(ranges)
+        return ipset
+
+    # Special case: ranges = (first, last)
+    # We assume that this is a single range and not two ranges of one address
+    # each
+    if (len(ranges) == 2 and
+            all(isinstance(r, (IP, str, long, int)) for r in ranges)):
+        range = IPRange(ranges[0], ranges[1])
+        from sys import stderr
+        stderr.write(
+                "Warning: parse_ip_range(): got a two addresses, "
+                "assuming a range rather than ""two distinct addresses\n"
+                "Wrap it inside a tuple to remove this warning, eg:\n"
+                "  'IP_RANGES': (\n"
+                "      ('{0!s}', '{1!s}'),\n"
+                "  ),\n"
+                "instead of:\n"
+                "  'IP_RANGES': (\n"
+                "      '{0!s}', '{1!s}'\n"
+                "  ),\n".format(range.first, range.last))
+        ipset.add(range)
+        return ipset
+
+    for r in ranges:
+        # List and tuples (first, last)
+        if isinstance(r, (list, tuple)):
+            if len(r) == 2:
+                ipset.add(IPRange(r[0], r[1]))
+            else:
+                raise ValueError("two address needed to define a range!")
+        # Works for IP, IPRange, str, long, int
+        else:
+            ipset.add(r)
+    return ipset

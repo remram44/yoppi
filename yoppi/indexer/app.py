@@ -1,5 +1,5 @@
 from yoppi.ftp.models import FtpServer, File
-from iptools import IP, IPRange
+from iptools import IP, IPRange, parse_ip_ranges
 from walk_ftp import walk_ftp
 from yoppi import settings
 
@@ -54,7 +54,7 @@ class Indexer:
             SCAN_DELAY=30*60, INDEX_DELAY=2*60*60,
             SEARCH_ON_USER=True, USER_IN_RANGE_ONLY=True,
             TIMEOUT=2):
-        self.ip_ranges = IP_RANGES
+        self.ip_ranges = parse_ip_ranges(IP_RANGES)
         self.scan_delay = SCAN_DELAY
         self.index_delay = INDEX_DELAY
         self.search_on_user = SEARCH_ON_USER
