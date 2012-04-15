@@ -62,17 +62,41 @@ class TestIPTools(unittest.TestCase):
 
         self.assertTrue(set.contains('192.168.1.24'))
 
-    @unittest.expectedFailure  # Not implemented yet
     def test_set_compact(self):
         set = IPSet()
         set.add(['160.228.152.1', '160.228.154.4'])
-        self.assertEqual(len(set.ranges), 1)
+        self.assertEqual(set.ranges, [
+            IPRange('160.228.152.1', '160.228.154.4'),
+        ])
         set.add(['192.168.0.2', '192.168.2.200'])
-        self.assertEqual(len(set.ranges), 2)
-        set.add(['160.228.154.255', '170.2.3.4'])
-        self.assertEqual(len(set.ranges), 2)
+        self.assertEqual(set.ranges, [
+            IPRange('160.228.152.1', '160.228.154.4'),
+            IPRange('192.168.0.2', '192.168.2.200'),
+        ])
+        set.add(['160.228.153.255', '170.2.3.4'])
+        self.assertEqual(set.ranges, [
+            IPRange('160.228.152.1', '170.2.3.4'),
+            IPRange('192.168.0.2', '192.168.2.200'),
+        ])
         set.add(['170.2.3.5', '193.2.3.4'])
-        self.assertEqual(len(set.ranges), 1)
+        self.assertEqual(set.ranges, [
+            IPRange('160.228.152.1', '193.2.3.4'),
+        ])
+
+    def test_set_iter(self):
+        set = IPSet()
+        set.add(['10.8.1.5', '10.8.1.7'])
+        set.add(['10.9.2.2', '10.9.2.4'])
+        set.add(['10.9.2.3', '10.9.2.5'])
+        iter = set.__iter__()
+        self.assertEqual(iter.next(), IP('10.8.1.5'))
+        self.assertEqual(iter.next(), IP('10.8.1.6'))
+        self.assertEqual(iter.next(), IP('10.8.1.7'))
+        self.assertEqual(iter.next(), IP('10.9.2.2'))
+        self.assertEqual(iter.next(), IP('10.9.2.3'))
+        self.assertEqual(iter.next(), IP('10.9.2.4'))
+        self.assertEqual(iter.next(), IP('10.9.2.5'))
+        self.assertRaises(StopIteration, iter.next)
 
 
 class IndexerTestCase(TestCase):

@@ -1,3 +1,6 @@
+import itertools
+from bisect import bisect
+
 class InvalidAddress(ValueError):
     pass
 
@@ -38,6 +41,9 @@ class IP:
 
     def __int__(self):
         return self.num
+
+    def __repr__(self):
+        return "IP(%s)" % self.__str__()
 
 
 class IPRangeIterator:
@@ -85,6 +91,9 @@ class IPRange:
     def __iter__(self):
         return IPRangeIterator(self)
 
+    def __repr__(self):
+        return "IPRange(%s, %s)" % (str(self.first), str(self.last))
+
 
 class IPSet:
     def __init__(self):
@@ -93,8 +102,27 @@ class IPSet:
     def add(self, range):
         if not isinstance(range, IPRange):
             range = IPRange(range)
-        self.ranges.append(range)
-        # TODO : Compact this stuff!
+
+        # Find insertion pos
+        pos = bisect(self.ranges, range)
+
+        # We might overlap with the range immediately left, plus any number of
+        # ranges right
+
+        # Merge left
+        if pos > 0 and range.first.num <= self.ranges[pos-1].last.num+1:
+            self.ranges[pos-1].last = range.last
+            pos -= 1
+            range = self.ranges[pos]
+        else:
+            self.ranges.insert(pos, range)
+
+        # Merge right
+        while (pos+1 < len(self.ranges) and
+                self.ranges[pos+1].first.num+1 <= range.last.num):
+            range.last = IP(
+                    max(range.last.num, self.ranges[pos+1].last.num))
+            del self.ranges[pos+1]
 
     def contains(self, ip):
         ip = IP(ip)
@@ -107,3 +135,6 @@ class IPSet:
     def intersection(self, other):
         # TODO
         pass
+
+    def __iter__(self):
+        return itertools.chain.from_iterable(self.ranges)
