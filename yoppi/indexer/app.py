@@ -162,8 +162,17 @@ class Indexer:
                 # Update the files in the database
                 File.objects.filter(id__in=to_delete).delete()
 
-                if 'sqlite' in settings.DATABASES['default']['ENGINE']:
-                    BULK_SIZE = 100
+                # Inserting all the objects in one go is probably not a good
+                # idea...
+                try:
+                    BULK_SIZE = settings.DATABASES['default']['BULK_SIZE']
+                except KeyError:
+                    if 'sqlite' in settings.DATABASES['default']['ENGINE']:
+                        BULK_SIZE = 100
+                    else:
+                        BULK_SIZE = 10000
+
+                if BULK_SIZE is not None and BULK_SIZE > 0:
                     for i in range(0, len(to_insert), BULK_SIZE):
                         File.objects.bulk_create(to_insert[i:i + BULK_SIZE])
                 else:
