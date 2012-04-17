@@ -148,6 +148,7 @@ class Indexer:
 
             try:
                 ftp.login()
+                ftp.sendcmd('OPTS UTF8 ON')
 
                 # Fetch all the files currently known
                 files = list(File.objects.filter(server=server))
