@@ -21,7 +21,7 @@ class RemoteFile:
             raise IOError("invalid LIST format\n")
         self.is_directory = m.group(1)[0] == "d"
         self.size = int(m.group(4))
-        self.name = m.group(6).decode('utf-8')
+        self.name = m.group(6).decode('utf-8', 'replace')
 
     def __eq__(self, other):
         if not isinstance(other, RemoteFile) and not isinstance(other, File):
