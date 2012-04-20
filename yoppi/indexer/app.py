@@ -1,3 +1,4 @@
+import contextlib
 from yoppi.ftp.models import FtpServer, File
 from iptools import IP, IPRange, parse_ip_ranges
 from walk_ftp import walk_ftp
@@ -11,40 +12,51 @@ from exceptions import IOError
 import ftplib
 from sys import stdout
 
+class ServerAlreadyIndexing(Exception):
+    pass
 
-class ServerIndexingLock:
-    def __init__(self, address, name=None):
-        self.address = address
-        self.name = name
 
-    def __enter__(self):
-        # Try to create a FtpServer
-        try:
-            self.server = FtpServer(
-                    address=self.address, name=self.name,
-                    online=True, last_online=timezone.now(),
-                    indexing=timezone.now())
-            self.server.save(force_insert=True)
-            return self.server
-        # It already exists -- try to update it
-        except IntegrityError:
-            self.server = None
-            # Try to lock it
-            if (FtpServer.objects.filter(indexing=None, address=self.address)
-                    .update(indexing=timezone.now()) == 0):
-                return None
-            else:
-                self.server = FtpServer.objects.get(address=self.address)
-                self.server.online = True
-                self.server.last_online = timezone.now()
-                self.server.indexing = timezone.now()
-                self.server.save()
-                return self.server
+@contextlib.contextmanager
+def ServerIndexingLock(address, name=None):
+    # Try to create a FtpServer
+    try:
+        server = FtpServer(
+                address=address, name=name,
+                online=True, last_online=timezone.now(),
+                indexing=timezone.now())
+        server.save(force_insert=True)
+    # It already exists -- try to update it
+    except IntegrityError:
+        # Try to lock it
+        if (FtpServer.objects.filter(indexing=None, address=address)
+                .update(indexing=timezone.now()) == 0):
+            raise ServerAlreadyIndexing(address)
+        else:
+            server = FtpServer.objects.get(address=address)
+            server.online = True
+            server.last_online = timezone.now()
+            server.indexing = timezone.now()
+            server.save()
 
-    def __exit__(self, type, value, traceback):
-        if self.server != None:
-            self.server.indexing = None
-            self.server.save()
+    yield server
+    server.indexing = None
+    server.save()
+
+
+def safe_bulk_create(to_insert):
+    try:
+        BULK_SIZE = settings.DATABASES['default']['BULK_SIZE']
+    except KeyError:
+        if 'sqlite' in settings.DATABASES['default']['ENGINE']:
+            BULK_SIZE = 100
+        else:
+            BULK_SIZE = 10000
+
+    if BULK_SIZE is not None and BULK_SIZE > 0:
+        for i in range(0, len(to_insert), BULK_SIZE):
+            File.objects.bulk_create(to_insert[i:i + BULK_SIZE])
+    else:
+        File.objects.bulk_create(to_insert)
 
 
 class Indexer:
@@ -117,7 +129,7 @@ class Indexer:
         return found
 
     # Index a server
-    def index(self, address, verbose=1):
+    def index(self, address):
         # 'address' must be a valid IP address
         if not isinstance(address, IP):
             address = IP(address)
@@ -134,66 +146,35 @@ class Indexer:
                     server.online = False
                     server.save()
             except FtpServer.DoesNotExist:
-                if verbose >= 1:
-                    stdout.write("couldn't connect to %s\n" % address)
-            return False
+                pass
+            raise
 
         name = self._defaultServerName(address)
 
         with ServerIndexingLock(address, name) as server:
-            if server == None:
-                if verbose >= 1:
-                    stdout.write("%s already being indexed\n" % address)
-                return False
+            ftp.login()
+            ftp.sendcmd('OPTS UTF8 ON')
 
-            try:
-                ftp.login()
-                ftp.sendcmd('OPTS UTF8 ON')
+            # Fetch all the files currently known
+            files = dict((f.fullpath(), f) for f in File.objects.filter(server=server))
 
-                # Fetch all the files currently known
-                files = list(File.objects.filter(server=server))
-                files = dict((f.fullpath(), f) for f in files)
+            # Recursively walk the FTP
+            to_insert, to_delete, nb_files, total_size = \
+                    walk_ftp(server, ftp, files)
+            # The file that were not found need to be deleted as well
+            to_delete.extend(f.id for f in files.itervalues())
 
-                # Recursively walk the FTP
-                to_insert, to_delete, nb_files, total_size = \
-                        walk_ftp(server, ftp, files)
-                # The file that were not found need to be deleted as well
-                to_delete += [f.id for f in files.itervalues()]
+            # Update the files in the database
+            File.objects.filter(id__in=to_delete).delete()
 
-                # Update the files in the database
-                File.objects.filter(id__in=to_delete).delete()
+            safe_bulk_create(to_insert)
 
-                # Inserting all the objects in one go is probably not a good
-                # idea...
-                try:
-                    BULK_SIZE = settings.DATABASES['default']['BULK_SIZE']
-                except KeyError:
-                    if 'sqlite' in settings.DATABASES['default']['ENGINE']:
-                        BULK_SIZE = 100
-                    else:
-                        BULK_SIZE = 10000
+            # Update the server
+            server.size = total_size
+            # It will get save()'d when we exit the 'with' block
 
-                if BULK_SIZE is not None and BULK_SIZE > 0:
-                    for i in range(0, len(to_insert), BULK_SIZE):
-                        File.objects.bulk_create(to_insert[i:i + BULK_SIZE])
-                else:
-                    File.objects.bulk_create(to_insert)
-
-                # Update the server
-                server.size = total_size
-                # It will get save()'d when we exit the 'with' block
-
-                ftp.close()
-                if verbose >= 1:
-                    stdout.write("%d files found on %s, %d b\n" %
-                            (nb_files, address, total_size))
-                if verbose >= 2:
-                    stdout.write("%d insertions, %s deletions\n" %
-                            (len(to_insert), len(to_delete)))
-                return True
-            except IOError as e:
-                stdout.write("I/O error!\n%s\n" % e)
-                return False
+            ftp.close()
+            return nb_files, total_size, to_insert, to_delete
 
     def run(self, args):
         pass
