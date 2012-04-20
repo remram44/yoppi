@@ -28,7 +28,7 @@ class FtpServer(models.Model):
     )
 
     def display_name(self):
-        if self.name != "":
+        if self.name:
             return self.name
         else:
             return self.address

@@ -15,6 +15,7 @@
     <tr class="titre">
         <th>Name</th>
         <th>Size</th>
+    {% if query %}<th>Server</th>{% endif %}
     </tr>
     </thead>
     <tbody>
@@ -28,6 +29,7 @@
               </a>
             </td>
             <td width="100" align="right">{{ file.size|filesizeformat }}</td>
+            {% if query %}<td><a href="{{ file.server.get_absolute_url }}">{{ file.server.display_name }}</a></td>{% endif %}
         </tr>
     {% empty %}
         <tr>
