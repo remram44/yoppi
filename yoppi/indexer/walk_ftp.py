@@ -20,7 +20,7 @@ class RemoteFile:
     #   5: date
     #   6: filename
 
-    def __init__(self, line):
+    def __init__(self, line, decode=str.decode):
         m = self._line_regex.match(line)
         if not m:
             raise IOError("invalid LIST format\n")
@@ -28,7 +28,7 @@ class RemoteFile:
         self.is_link = m.group(1)[0] == 'l'
         self.size = int(m.group(4))
         self.raw_name = m.group(6)
-        self.name = self.raw_name.decode('utf-8', 'replace')
+        self.name = decode(self.raw_name)
 
     def __eq__(self, other):
         if not isinstance(other, RemoteFile) and not isinstance(other, File):
@@ -50,14 +50,35 @@ class RemoteFile:
         return self.name
 
 
+class FallbackDecoder(object):
+    def __init__(self):
+        self.encodings = ['utf-8', 'latin9']
+        self.next_enc()
+
+    def next_enc(self):
+        try:
+            self.enc = self.encodings.pop()
+        except IndexError:
+            raise UnicodeDecodeError('Tried all the encodings for this ftp,'
+                                     ' none fits.')
+
+    def decode(self, str):
+        try:
+            return str.decode(self.enc)
+        except UnicodeDecodeError:
+            self.next_enc()
+            return self.decode(str)
+
+
 def yield_files(server, ftp):
     """Iterates over the ftp and yield all the files as tuples
     (path, RemoteFile)"""
     stack = [('/', 0)]
     files = []
+    decode = FallbackDecoder().decode
 
     def callback(line):
-        files.append(RemoteFile(line))
+        files.append(RemoteFile(line, decode))
 
     while stack:
         path, depth = stack.pop()
@@ -76,7 +97,7 @@ def yield_files(server, ftp):
                 continue
             if f.is_directory:
                 stack.append(('%s/%s'%(path, f.raw_name), depth + 1))
-            yield path.decode('utf-8', 'replace'), f
+            yield decode(path), f
 
         files = []
 

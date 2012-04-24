@@ -245,6 +245,19 @@ class IndexerTestCase(TestCase):
         files = ftp.files.all()
         self.assertFalse(files)
 
+    def test_alternative_encoding(self):
+        def fake_dir(path, callback):
+            callback(u'-r--r--r-- 1 ftp ftp 1000 Feb 20  2012 élève.zip'.encode('latin9'))
+
+        self.FTP().dir = fake_dir
+
+        indexer = self._get_indexer()
+        indexer.index('10.9.8.7')
+
+        from yoppi.ftp.models import File
+        file = File.objects.get()
+        self.assertEqual(file.name, u'élève.zip')
+
 
 if __name__ == '__main__':
     unittest.main()
