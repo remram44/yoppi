@@ -49,7 +49,7 @@ class Command(BaseCommand):
             if verbosity >= 1:
                 print "%d files found on %s, %d b" % (nb_files, address, total_size)
             if verbosity >= 2:
-                print "%d insertions, %s deletions" % (len(to_insert), len(to_delete))
+                print "%d insertions, %d deletions" % (len(to_insert), len(to_delete))
         except ServerAlreadyIndexing as e:
             raise CommandError("%s is already being indexed", e)
         except (ValueError, IOError) as e:

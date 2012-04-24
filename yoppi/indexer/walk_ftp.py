@@ -83,9 +83,9 @@ def yield_files(server, ftp):
     while stack:
         path, depth = stack.pop()
         if depth > MAX_DEPTH:
-            raise SuspiciousFtp("%s directory depth is more than %s."
-                                " It doesn't seem legit"%
-                                (MAX_DEPTH, server.display_name()))
+            raise SuspiciousFtp("%s's directory depth is more than %d."
+                                " It doesn't seem legit." %
+                                (server.display_name(), MAX_DEPTH))
         ftp.dir(path, callback)
 
         # For ftp, root is '/', but for us, it's ''
@@ -96,7 +96,7 @@ def yield_files(server, ftp):
             if f.is_link:
                 continue
             if f.is_directory:
-                stack.append(('%s/%s'%(path, f.raw_name), depth + 1))
+                stack.append(('%s/%s' % (path, f.raw_name), depth + 1))
             yield decode(path), f
 
         files = []
@@ -112,13 +112,13 @@ def walk_ftp(server, connection, db_files):
     for path, file in yield_files(server, connection):
         nb_files += 1
         if nb_files > MAX_FILES:
-            raise SuspiciousFtp("%s has more than %s file."
-                                " It doesn't seem legit"%
-                                (MAX_FILES, server.display_name()))
+            raise SuspiciousFtp("%s has more than %d files."
+                                " It doesn't seem legit." %
+                                (server.display_name(), MAX_FILES))
         total_size += file.size
 
         try:
-            ftp_file = db_files.pop(u'%s/%s'%(path, file.name))
+            ftp_file = db_files.pop(u'%s/%s' % (path, file.name))
         except KeyError:
             # New file -- we have to insert it
             to_insert.append(file.toFile(server, path))
