@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, Http404
@@ -69,17 +70,27 @@ def download(request, address, path):
 
 
 def search(request):
-    try:
-        query = request.GET['query']
-        # TODO : A simple contains is probably not enough
-        files = File.objects.filter(name__icontains=query).order_by('-is_directory', 'name')
-        return render(
-            request,
-            'ftp/search.html',
-            {'servers': all_servers(), 'files': list(files), 'query': query}
-        )
-    except KeyError:
+    query = request.GET.get('query')
+    if not query:
+        # not query or empty query
         return redirect('yoppi.ftp.views.index')
+
+    # TODO : A simple contains is probably not enough
+    all_files = File.objects.filter(name__icontains=query).order_by('-is_directory', 'name')
+    paginator = Paginator(all_files, 100)
+    page = request.GET.get('page')
+    try:
+        files = paginator.page(page)
+    except PageNotAnInteger:
+        files = paginator.page(1)
+    except EmptyPage:
+        files = paginator.page(paginator.num_pages)
+
+    return render(
+        request,
+        'ftp/search.html',
+        {'servers': all_servers(), 'files': files, 'query': query}
+    )
 
 
 def error_404(request):

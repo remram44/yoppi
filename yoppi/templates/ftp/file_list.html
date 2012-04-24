@@ -39,3 +39,13 @@
     {% endfor %}
     </tbody>
 </table>
+
+{% if query %}
+    <ul class="pager">
+        <li{% if not files.has_previous %} class="disabled"{% endif %}>
+            <a href="?query={{ query }}&page={{ files.previous_page_number }}">previous</a></li>
+        <li>Page {{ files.number }} of {{ files.paginator.num_pages }}</li>
+        <li{% if not files.has_next %} class="disabled"{% endif %}>
+            <a href="?query={{ query }}&page={{ files.next_page_number }}">next</a></li>
+    </ul>
+{% endif %}
