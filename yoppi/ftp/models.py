@@ -1,6 +1,6 @@
 from django.db import models
-import math
 from django.utils import timezone
+from django.utils.translation import ugettext_lazy
 
 
 class FtpServer(models.Model):
@@ -20,11 +20,11 @@ class FtpServer(models.Model):
 
     # TODO : Locale-dependent
     _times = (
-        (1, 'secondes'),
-        (60, 'minutes'),
-        (60, 'hours'),
-        (24, 'days'),
-        (7, 'weeks'),
+        (1, ugettext_lazy(u'seconds')),
+        (60, ugettext_lazy(u'minutes')),
+        (60, ugettext_lazy(u'hours')),
+        (24, ugettext_lazy(u'days')),
+        (7, ugettext_lazy(u'weeks')),
     )
 
     def display_name(self):
@@ -53,7 +53,7 @@ class FtpServer(models.Model):
                 last_label = label
             else:
                 break
-        return "%d %s" % (int(t), last_label)
+        return u"%d %s" % (int(t), last_label)
 
 
 ICONS = {

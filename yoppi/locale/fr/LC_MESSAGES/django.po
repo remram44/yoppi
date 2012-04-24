@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-24 12:06-0500\n"
+"POT-Creation-Date: 2012-04-24 12:55-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,6 +19,26 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Language: fr_FR\n"
 "X-Source-Language: C\n"
+
+#: ftp/models.py:23
+msgid "seconds"
+msgstr "secondes"
+
+#: ftp/models.py:24
+msgid "minutes"
+msgstr "minutes"
+
+#: ftp/models.py:25
+msgid "hours"
+msgstr "heures"
+
+#: ftp/models.py:26
+msgid "days"
+msgstr "jours"
+
+#: ftp/models.py:27
+msgid "weeks"
+msgstr "semaines"
 
 #: templates/404.html:6
 msgid "Error 404"
