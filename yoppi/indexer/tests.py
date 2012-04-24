@@ -201,6 +201,36 @@ class IndexerTestCase(TestCase):
         self.assertEqual(File.objects.filter(name=u' smthg.zip').count(),
                 1)
 
+    def test_infinite_loop(self):
+        def fake_dir(path, callback):
+            callback('drwxr-xr-x 1 ftp ftp  0 Mar 11 13:49 stuff')
+
+        self.FTP().dir = fake_dir
+
+        indexer = self._get_indexer()
+
+        from yoppi.indexer.walk_ftp import SuspiciousFtp
+        with self.assertRaises(SuspiciousFtp):
+            indexer.index('10.9.8.7')
+
+    def test_lot_of_files(self):
+        patcher = mock.patch('yoppi.indexer.walk_ftp.MAX_FILES', 10)
+        patcher.start()
+
+        def fake_dir(path, callback):
+            for i in xrange(11):
+                callback('-r--r--r-- 1 ftp ftp 57 Feb 20  2012 smthg.zip')
+
+        self.FTP().dir = fake_dir
+
+        indexer = self._get_indexer()
+
+        from yoppi.indexer.walk_ftp import SuspiciousFtp
+        with self.assertRaises(SuspiciousFtp):
+            indexer.index('10.9.8.7')
+
+        patcher.stop()
+
 
 if __name__ == '__main__':
     unittest.main()

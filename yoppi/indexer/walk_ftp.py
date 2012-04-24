@@ -2,6 +2,11 @@ import re
 
 from yoppi.ftp.models import File
 
+MAX_DEPTH = 1000
+MAX_FILES = 1000000
+
+class SuspiciousFtp(Exception):
+    pass
 
 class RemoteFile:
     # drwxr-xr-x 1 ftp ftp  0 Mar 11 13:49 stuff
@@ -44,17 +49,21 @@ class RemoteFile:
         return self.name
 
 
-def yield_files(ftp):
+def yield_files(server, ftp):
     """Iterates over the ftp and yield all the files as tuples
     (path, RemoteFile)"""
-    stack = ['/']
+    stack = [('/', 0)]
     files = []
 
     def callback(line):
         files.append(RemoteFile(line))
 
     while stack:
-        path = stack.pop()
+        path, depth = stack.pop()
+        if depth > MAX_DEPTH:
+            raise SuspiciousFtp("%s directory depth is more than %s."
+                                " It doesn't seem legit"%
+                                (MAX_DEPTH, server.display_name()))
         ftp.dir(path, callback)
 
         # For ftp, root is '/', but for us, it's ''
@@ -63,7 +72,7 @@ def yield_files(ftp):
 
         for f in files:
             if f.is_directory:
-                stack.append('%s/%s'%(path, f.raw_name))
+                stack.append(('%s/%s'%(path, f.raw_name), depth + 1))
             yield path.decode('utf-8', 'replace'), f
 
         files = []
@@ -76,8 +85,12 @@ def walk_ftp(server, connection, db_files):
     to_insert = []
     to_delete = []
 
-    for path, file in yield_files(connection):
+    for path, file in yield_files(server, connection):
         nb_files += 1
+        if nb_files > MAX_FILES:
+            raise SuspiciousFtp("%s has more than %s file."
+                                " It doesn't seem legit"%
+                                (MAX_FILES, server.display_name()))
         total_size += file.size
 
         try:
