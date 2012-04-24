@@ -25,6 +25,7 @@ class RemoteFile:
         if not m:
             raise IOError("invalid LIST format\n")
         self.is_directory = m.group(1)[0] == "d"
+        self.is_link = m.group(1)[0] == 'l'
         self.size = int(m.group(4))
         self.raw_name = m.group(6)
         self.name = self.raw_name.decode('utf-8', 'replace')
@@ -71,6 +72,8 @@ def yield_files(server, ftp):
             path = ''
 
         for f in files:
+            if f.is_link:
+                continue
             if f.is_directory:
                 stack.append(('%s/%s'%(path, f.raw_name), depth + 1))
             yield path.decode('utf-8', 'replace'), f

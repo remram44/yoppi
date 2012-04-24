@@ -231,6 +231,20 @@ class IndexerTestCase(TestCase):
 
         patcher.stop()
 
+    def test_ignore_links(self):
+        def fake_dir(path, callback):
+            callback('lrwxrwxrwx    1 0        0              12 Sep 12  2007 incoming -> pub/incoming')
+
+        self.FTP().dir = fake_dir
+
+        indexer = self._get_indexer()
+        indexer.index('10.9.8.7')
+
+        from yoppi.ftp.models import FtpServer
+        ftp = FtpServer.objects.get()
+        files = ftp.files.all()
+        self.assertFalse(files)
+
 
 if __name__ == '__main__':
     unittest.main()
