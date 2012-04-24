@@ -1,5 +1,6 @@
 import itertools
 from bisect import bisect
+import warnings
 
 class InvalidAddress(ValueError):
     pass
@@ -156,8 +157,7 @@ def parse_ip_ranges(ranges):
     if (len(ranges) == 2 and
             all(isinstance(r, (IP, str, long, int)) for r in ranges)):
         range = IPRange(ranges[0], ranges[1])
-        from sys import stderr
-        stderr.write(
+        warnings.warn(
                 "Warning: parse_ip_range(): got a two addresses, "
                 "assuming a range rather than ""two distinct addresses\n"
                 "Wrap it inside a tuple to remove this warning, eg:\n"
