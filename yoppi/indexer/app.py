@@ -38,9 +38,11 @@ def ServerIndexingLock(address, name=None):
             server.indexing = timezone.now()
             server.save()
 
-    yield server
-    server.indexing = None
-    server.save()
+    try:
+        yield server
+    finally:
+        server.indexing = None
+        server.save()
 
 
 def safe_bulk_create(to_insert):
