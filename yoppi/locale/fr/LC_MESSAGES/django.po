@@ -1,0 +1,123 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-04-24 12:06-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Language: fr_FR\n"
+"X-Source-Language: C\n"
+
+#: templates/404.html:6
+msgid "Error 404"
+msgstr "Erreu 404"
+
+#: templates/404.html:7
+msgid "The page you asked for couldn't be found."
+msgstr "La page que vous demandez est introuvable."
+
+#: templates/500.html:6
+msgid "Error 500"
+msgstr "Erreur 500"
+
+#: templates/500.html:7
+msgid ""
+"There was an error processing your request. We have been notifier and will "
+"examine the problem shortly."
+msgstr ""
+"Une erreur s'est produite pendant le traitement de votre requête. Nous avons "
+"été prévenus et allons examiner le problème."
+
+#: templates/base.html:22
+msgid "Home"
+msgstr "Accueil"
+
+#: templates/base.html:28
+msgid "Search"
+msgstr "Rechercher"
+
+#: templates/base.html:38
+msgid ""
+"Yoppi Indexer on <a href=\"https://github.com/remram44/yoppi\">github.com</a>"
+msgstr ""
+"Yoppi Indexer sur <a "
+"href=\"https://github.com/remram44/yoppi\">github.com</a>"
+
+#: templates/ftp/file_list.html:17 templates/ftp/ftp_list.html:5
+msgid "Name"
+msgstr "Nom"
+
+#: templates/ftp/file_list.html:18 templates/ftp/ftp_list.html:6
+msgid "Size"
+msgstr "Taille"
+
+#: templates/ftp/file_list.html:19
+msgid "Server"
+msgstr "Serveur"
+
+#: templates/ftp/file_list.html:45
+msgid "No files to show"
+msgstr "Pas de fichiers à afficher"
+
+#: templates/ftp/file_list.html:55
+msgid "previous"
+msgstr "précédent"
+
+#: templates/ftp/file_list.html:56
+#, python-format
+msgid "Page %(page)s of %(total)s"
+msgstr "Page %(page)s sur %(total)s"
+
+#: templates/ftp/file_list.html:58
+msgid "next"
+msgstr "suivant"
+
+#: templates/ftp/ftp_list.html:7
+msgid "Offline for"
+msgstr "Déco depuis"
+
+#: templates/ftp/ftp_list.html:30
+msgid "No servers..."
+msgstr "Pas de serveurs..."
+
+#: templates/ftp/index.html:4
+msgid "FTP index - Yoppi"
+msgstr "Index des FTPs - Yoppi"
+
+#: templates/ftp/index.html:8
+msgid "Welcome to Yoppi!"
+msgstr "Bienvenue sur Yoppi !"
+
+#: templates/ftp/index.html:9
+msgid ""
+"You can search for files on the ftps using the search dialog in the right "
+"upper corner, or browse the content of the ftp on the left."
+msgstr ""
+"Vous pouvez rechercher des fichiers sur les ftps à l'aide de la barre de "
+"recherche en haut à droite, ou naviguer dans le contenu des ftps sur la "
+"gauche."
+
+#: templates/ftp/search.html:4
+msgid "Search results - Yoppi"
+msgstr "Résultats de la recherche - Yoppi"
+
+#: templates/ftp/search.html:7
+msgid "Search:"
+msgstr "Recherche :"
+
+#: templates/ftp/server.html:4
+#, python-format
+msgid "Listing - %(server)s - Yoppi"
+msgstr "Contenu - %(server)s - Yoppi"

@@ -1,5 +1,7 @@
 # Django settings for yoppi project.
 
+import os
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -46,6 +48,8 @@ TIME_ZONE = 'America/Chicago'
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-us'
+
+LOCALE_DIRS = (os.path.join(os.path.dirname(__file__), 'locale'))
 
 SITE_ID = 1
 
