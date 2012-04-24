@@ -42,7 +42,8 @@ def server(request, address, path=''):
 
     hierarchy = decompose_path(server.address, path)
 
-    files = server.files.filter(path=path).order_by('-is_directory', 'name')
+    files = (server.files.filter(path=path)
+             .order_by('-is_directory', 'name').select_related('server'))
 
     return render(
         request,
@@ -76,7 +77,8 @@ def search(request):
         return redirect('yoppi.ftp.views.index')
 
     # TODO : A simple contains is probably not enough
-    all_files = File.objects.filter(name__icontains=query).order_by('-is_directory', 'name')
+    all_files = (File.objects.filter(name__icontains=query)
+                 .order_by('-is_directory', 'name').select_related('server'))
     paginator = Paginator(all_files, 100)
     page = request.GET.get('page')
     try:
