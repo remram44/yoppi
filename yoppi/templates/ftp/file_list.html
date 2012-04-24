@@ -29,7 +29,15 @@
               </a>
             </td>
             <td width="100" align="right">{{ file.size|filesizeformat }}</td>
-            {% if query %}<td><a href="{{ file.server.get_absolute_url }}">{{ file.server.display_name }}</a></td>{% endif %}
+            {% if query %}
+                <td><a href="{{ file.server.get_absolute_url }}">
+                    {% if file.server.online %}
+                        <i class="icon-folder-open"></i>
+                    {% else %}
+                        <i class="icon-off"></i>
+                    {% endif %}
+                    {{ file.server.display_name }}</a></td>
+            {% endif %}
         </tr>
     {% empty %}
         <tr>
