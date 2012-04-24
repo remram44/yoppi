@@ -1,6 +1,6 @@
-from yoppi.ftp.models import File
-
 import re
+
+from yoppi.ftp.models import File
 
 
 class RemoteFile:
@@ -17,11 +17,12 @@ class RemoteFile:
 
     def __init__(self, line):
         m = self._line_regex.match(line)
-        if m == None:
+        if not m:
             raise IOError("invalid LIST format\n")
         self.is_directory = m.group(1)[0] == "d"
         self.size = int(m.group(4))
-        self.name = m.group(6).decode('utf-8', 'replace')
+        self.raw_name = m.group(6)
+        self.name = self.raw_name.decode('utf-8', 'replace')
 
     def __eq__(self, other):
         if not isinstance(other, RemoteFile) and not isinstance(other, File):
@@ -43,39 +44,44 @@ class RemoteFile:
         return self.name
 
 
-def walk_ftp(server, connection, db_files, path='/'):
+def yield_files(ftp):
+    """Iterates over the ftp and yield all the files as tuples
+    (path, RemoteFile)"""
+    stack = ['/']
     files = []
 
     def callback(line):
         files.append(RemoteFile(line))
 
-    connection.dir(path, callback)
+    while stack:
+        path = stack.pop()
+        ftp.dir(path, callback)
 
-    if path == '/':
-        path = ''
+        # For ftp, root is '/', but for us, it's ''
+        if path == '/':
+            path = ''
 
+        for f in files:
+            if f.is_directory:
+                stack.append('%s/%s'%(path, f.raw_name))
+            yield path.decode('utf-8', 'replace'), f
+
+        files = []
+
+
+def walk_ftp(server, connection, db_files):
     nb_files = 0
     total_size = 0
 
     to_insert = []
     to_delete = []
 
-    for file in files:
+    for path, file in yield_files(connection):
         nb_files += 1
-
-        # Recursively walk over subdirectories
-        if file.is_directory:
-            r_to_insert, r_to_delete, r_nb_files, file.size = \
-                    walk_ftp(server, connection, db_files,
-                        path + '/' + file.name.encode('utf-8'))
-            to_insert += r_to_insert
-            to_delete += r_to_delete
-            nb_files += r_nb_files
-
         total_size += file.size
 
         try:
-            ftp_file = db_files.pop(path.decode('utf-8') + u'/' + file.name)
+            ftp_file = db_files.pop(u'%s/%s'%(path, file.name))
         except KeyError:
             # New file -- we have to insert it
             to_insert.append(file.toFile(server, path))
