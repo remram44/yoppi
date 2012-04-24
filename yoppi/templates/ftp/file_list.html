@@ -1,3 +1,4 @@
+{% load i18n %}
 {% if hierarchy %}
 <ul class="breadcrumb">
 {% for dir in hierarchy %}
@@ -13,9 +14,9 @@
 <table class="table table-striped table-condensed">
     <thead>
     <tr class="titre">
-        <th>Name</th>
-        <th>Size</th>
-    {% if query %}<th>Server</th>{% endif %}
+        <th>{% trans "Name" %}</th>
+        <th>{% trans "Size" %}</th>
+    {% if query %}<th>{% trans "Server" %}</th>{% endif %}
     </tr>
     </thead>
     <tbody>
@@ -41,7 +42,7 @@
         </tr>
     {% empty %}
         <tr>
-            <td>No files to show</td>
+            <td>{% trans "No files to show" %}</td>
             <td></td>
         </tr>
     {% endfor %}
@@ -51,9 +52,9 @@
 {% if query %}
     <ul class="pager">
         <li{% if not files.has_previous %} class="disabled"{% endif %}>
-            <a href="?query={{ query }}&page={{ files.previous_page_number }}">previous</a></li>
-        <li>Page {{ files.number }} of {{ files.paginator.num_pages }}</li>
+            <a href="?query={{ query }}&page={{ files.previous_page_number }}">{% trans "previous" %}</a></li>
+        <li>{% blocktrans with page=file.number total=files.paginator.num_pages %}Page {{ page }} of {{ total }}{% endblocktrans %}</li>
         <li{% if not files.has_next %} class="disabled"{% endif %}>
-            <a href="?query={{ query }}&page={{ files.next_page_number }}">next</a></li>
+            <a href="?query={{ query }}&page={{ files.next_page_number }}">{% trans "next" %}</a></li>
     </ul>
 {% endif %}

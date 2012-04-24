@@ -1,9 +1,10 @@
 {% extends "ftp/browsing_base.html" %}
+{% load i18n %}
 
-{% block page_title %}Search results - Yoppi{% endblock %}
+{% block page_title %}{% trans "Search results - Yoppi" %}{% endblock %}
 
 {% block title %}
-    Search: {{ query }}
+    {% trans "Search:" %} {{ query }}
 {% endblock %}
 
 {% block content %}
