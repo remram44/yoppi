@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
+from django.utils.translation import pgettext_lazy, ugettext
 from yoppi.indexer.app import Indexer
 from yoppi.ftp.models import FtpServer
 
@@ -12,8 +13,10 @@ except KeyError:
 
 
 class Command(BaseCommand):
-    args = '<first IP> [last IP]'
-    help = 'scan the specified IP range to detect FTP servers'
+    args = pgettext_lazy("args for 'scan' command",
+                         "<first IP> [last IP]")
+    help = pgettext_lazy("help for 'scan' command",
+                         "scan the specified IP range to detect FTP servers")
 
     def handle(self, *args, **options):
         indexer = Indexer(**settings)
@@ -24,6 +27,7 @@ class Command(BaseCommand):
             elif len(args) == 2:
                 indexer.scan(args[0], args[1])
             else:
-                raise CommandError("Expected 2 parameters, got %d" % len(args))
+                raise CommandError(
+                        ugettext("Expected 2 parameters, got %d") % len(args))
         except ValueError as e:
             raise CommandError("%s: %s" % (e.__class__.__name__, e))

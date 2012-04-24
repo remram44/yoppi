@@ -1,12 +1,13 @@
 {% extends "ftp/browsing_base.html" %}
 
-{% block page_title %}Listing - {{ active_server.display_name }} - Yoppi{% endblock %}
+{% load i18n %}
+
+{% block page_title %}{% blocktrans %}Listing - {{ active_server.display_name }} - Yoppi{% endblocktrans %}{% endblock %}
 
 {% block title %}
     {{ active_server.display_name }}
 {% endblock %}
 
 {% block content %}
-    <!-- TODO : breadcrumb of the parent folders -->
     {% include "ftp/file_list.html" %}
 {% endblock %}

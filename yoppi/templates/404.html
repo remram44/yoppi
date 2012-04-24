@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 
+{% load i18n %}
+
 {% block base_content %}
 <div class="alert-error">
-    <h1>Error 404</h1>
-    <p>The page you asked for couldn't be found.</p>
+    <h1>{% trans "Error 404" %}</h1>
+    <p>{% trans "The page you asked for couldn't be found." %}</p>
 </div>
 {% endblock %}

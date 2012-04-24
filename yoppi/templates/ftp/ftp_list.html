@@ -1,9 +1,11 @@
+{% load i18n %}
+
 <table class="table">
     <thead>
     <tr class="titre">
-        <th>Name</th>
-        <th>Size</th>
-        <th>Offline for</th>
+        <th>{% trans "Name" context "server name table header" %}</th>
+        <th>{% trans "Size" context "server size table header" %}</th>
+        <th>{% trans "Offline for" context "table header" %}</th>
     </tr>
     </thead>
     <tbody><!-- TODO : active ftp -->
@@ -26,7 +28,7 @@
         </tr>
     {% empty %}
         <tr>
-            <td>No servers...</td>
+            <td>{% trans "No servers..." %}</td>
             <td></td>
             <td></td>
         </tr>

@@ -1,6 +1,7 @@
 import re
 
 from yoppi.ftp.models import File
+from django.utils.translation import ugettext
 
 MAX_DEPTH = 1000
 MAX_FILES = 1000000
@@ -83,9 +84,10 @@ def yield_files(server, ftp):
     while stack:
         path, depth = stack.pop()
         if depth > MAX_DEPTH:
-            raise SuspiciousFtp("%s's directory depth is more than %d."
-                                " It doesn't seem legit." %
-                                (server.display_name(), MAX_DEPTH))
+            raise SuspiciousFtp(ugettext(
+                    "%(server)s's directory depth is more than %(max_depth)d."
+                    " It doesn't seem legit.") %
+                    dict(server=server.display_name(), max_depth=MAX_DEPTH))
         ftp.dir(path, callback)
 
         # For ftp, root is '/', but for us, it's ''
@@ -112,9 +114,10 @@ def walk_ftp(server, connection, db_files):
     for path, file in yield_files(server, connection):
         nb_files += 1
         if nb_files > MAX_FILES:
-            raise SuspiciousFtp("%s has more than %d files."
-                                " It doesn't seem legit." %
-                                (server.display_name(), MAX_FILES))
+            raise SuspiciousFtp(ugettext(
+                    "%(server)s has more than %(max_files)d files."
+                    " It doesn't seem legit.") %
+                    dict(server=server.display_name(), max_files=MAX_FILES))
         total_size += file.size
 
         try:

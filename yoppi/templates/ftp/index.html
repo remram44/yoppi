@@ -1,10 +1,12 @@
 {% extends "ftp/browsing_base.html" %}
 
-{% block page_title %}FTP index - Yoppi{% endblock %}
+{% load i18n %}
+
+{% block page_title %}{% trans "FTP index - Yoppi" %}{% endblock %}
 
 {% block content %}
     <div class="hero-unit">
-        <h1>Welcome to Yoppi!</h1>
-        <p>You can search for files on the ftps using the search dialog in the right upper corner, or browse the content of the ftp on the left.</p>
+        <h1>{% trans "Welcome to Yoppi!" %}</h1>
+        <p>{% trans "You can search for files on the ftps using the search dialog in the right upper corner, or browse the content of the ftp on the left." %}</p>
     </div>
 {% endblock %}
