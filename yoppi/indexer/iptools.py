@@ -2,6 +2,8 @@ import itertools
 from bisect import bisect
 import warnings
 
+from django.utils.translation import ugettext
+
 class InvalidAddress(ValueError):
     pass
 
@@ -157,17 +159,17 @@ def parse_ip_ranges(ranges):
     if (len(ranges) == 2 and
             all(isinstance(r, (IP, str, long, int)) for r in ranges)):
         range = IPRange(ranges[0], ranges[1])
-        warnings.warn(
-                "Warning: parse_ip_range(): got a two addresses, "
-                "assuming a range rather than ""two distinct addresses\n"
-                "Wrap it inside a tuple to remove this warning, eg:\n"
+        warnings.warn(ugettext(
+                "Warning: parse_ip_range(): got two addresses, "
+                "assuming a range rather than two distinct addresses\n"
+                "Wrap them inside a tuple to remove this warning, eg:\n"
                 "  'IP_RANGES': (\n"
                 "      ('{0!s}', '{1!s}'),\n"
                 "  ),\n"
                 "instead of:\n"
                 "  'IP_RANGES': (\n"
                 "      '{0!s}', '{1!s}'\n"
-                "  ),\n".format(range.first, range.last))
+                "  ),\n").format(range.first, range.last))
         ipset.add(range)
         return ipset
 
@@ -177,7 +179,7 @@ def parse_ip_ranges(ranges):
             if len(r) == 2:
                 ipset.add(IPRange(r[0], r[1]))
             else:
-                raise ValueError("two address needed to define a range!")
+                raise ValueError("two addresses needed to define a range!")
         # Works for IP, IPRange, str, long, int
         else:
             ipset.add(r)

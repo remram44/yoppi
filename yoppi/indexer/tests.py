@@ -119,9 +119,6 @@ class TestIPTools(unittest.TestCase):
                     parse_ip_ranges(('10.0.0.1', '10.1.2.3')).ranges,
                     expected)
             self.assertEqual(len(w), 1)
-            self.assertIn('Warning: parse_ip_range(): got a two addresses, '
-                          'assuming a range rather than two distinct addresses'
-                          , str(w[0].message))
         self.assertEqual(
                 parse_ip_ranges([('10.0.0.1', '10.1.2.3')]).ranges,
                 expected)

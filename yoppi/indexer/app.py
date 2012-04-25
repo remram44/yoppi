@@ -6,6 +6,7 @@ from yoppi import settings
 
 from django.db import IntegrityError
 from django.utils import timezone
+from django.utils.translation import ugettext
 
 import socket
 from exceptions import IOError
@@ -99,14 +100,16 @@ class Indexer:
                     if verbose != 0:
                         name = server.display_name()
                         if not server.online and verbose >= 2:
-                            stdout.write("%s is still offline\n" % name)
+                            stdout.write(
+                                    ugettext("%s is still offline\n") % name)
                         elif server.online and verbose >= 1:
-                            stdout.write("%s is now offline\n" % name)
+                            stdout.write(
+                                    ugettext("%s is now offline\n") % name)
                     server.online = False
                     server.save()
                 except FtpServer.DoesNotExist:
                     if verbose >= 3:
-                        stdout.write("%s didn't respond\n" % address)
+                        stdout.write(ugettext("%s didn't respond\n") % address)
             # Server online
             else:
                 found += 1
@@ -115,15 +118,19 @@ class Indexer:
                     if verbose != 0:
                         name = server.display_name()
                         if server.online and verbose >= 2:
-                            stdout.write("%s is still online\n" % name)
+                            stdout.write(
+                                    ugettext("%s is still online\n") % name)
                         elif not server.online and verbose >= 1:
-                            stdout.write("%s is now online\n" % name)
+                            stdout.write(
+                                    ugettext("%s is now online\n") % name)
                     server.online = True
                     server.last_online = timezone.now()
                     server.save()
                 except FtpServer.DoesNotExist:
                     if verbose >= 1:
-                        stdout.write("discovered new server at %s\n" % address)
+                        stdout.write(
+                                ugettext("discovered new server at %s\n") %
+                                        address)
                     server = FtpServer(
                         address=address, name=self._defaultServerName(address),
                         online=True, last_online=timezone.now())
