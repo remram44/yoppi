@@ -18,6 +18,14 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
+#: settings.py:56
+msgid "English"
+msgstr "Anglais"
+
+#: settings.py:57
+msgid "French"
+msgstr "Français"
+
 #: ftp/models.py:23
 msgid "seconds"
 msgstr "secondes"
@@ -37,14 +45,6 @@ msgstr "jours"
 #: ftp/models.py:27
 msgid "weeks"
 msgstr "semaines"
-
-#: settings.py:56
-msgid "English"
-msgstr "Anglais"
-
-#: settings.py:57
-msgid "French"
-msgstr "Français"
 
 #: indexer/app.py:104
 #, python-format
@@ -175,11 +175,11 @@ msgstr "scanne la plage IP spécifiée pour détecter des serveurs FTP"
 msgid "Expected 2 parameters, got %d"
 msgstr "2 paramètres attendus, %d reçus"
 
-#: templates/404.html:7
+#: templates/404.html:8
 msgid "Error 404"
 msgstr "Erreur 404"
 
-#: templates/404.html:8
+#: templates/404.html:9
 msgid "The page you asked for couldn't be found."
 msgstr "La page que vous avez demandée n'a pas pu être trouvée."
 
@@ -208,11 +208,13 @@ msgstr "Recherche"
 msgid "Yoppi Indexer on <a href=\"%(project_url)s\">github.com</a>"
 msgstr "Yoppi Indexer sur <a href=\"%(project_url)s\">github.com</a>"
 
-#: templates/ftp/file_list.html:18 templates/ftp/ftp_list.html:6
+#: templates/ftp/file_list.html:18
+msgctxt "file name table header"
 msgid "Name"
 msgstr "Nom"
 
 #: templates/ftp/file_list.html:20
+msgctxt "server name table header"
 msgid "Server"
 msgstr "Serveur"
 
@@ -221,6 +223,7 @@ msgid "No files to show"
 msgstr "Aucun fichier à afficher"
 
 #: templates/ftp/file_list.html:56
+msgctxt "previous page"
 msgid "previous"
 msgstr "précédent"
 
@@ -230,14 +233,22 @@ msgid "Page %(files.number)s of %(files.paginator.num_pages)s"
 msgstr "Page %(files.number)s sur %(files.paginator.num_pages)s"
 
 #: templates/ftp/file_list.html:59
+msgctxt "next page"
 msgid "next"
 msgstr "suivant"
 
+#: templates/ftp/ftp_list.html:6
+msgctxt "server name table header"
+msgid "Name"
+msgstr "Nom"
+
 #: templates/ftp/ftp_list.html:7
+msgctxt "server size table header"
 msgid "Size"
 msgstr "Taille"
 
 #: templates/ftp/ftp_list.html:8
+msgctxt "table header"
 msgid "Offline for"
 msgstr "Hors-ligne depuis"
 

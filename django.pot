@@ -26,6 +26,26 @@ msgstr ""
 msgid "French"
 msgstr ""
 
+#: ftp/models.py:23
+msgid "seconds"
+msgstr ""
+
+#: ftp/models.py:24
+msgid "minutes"
+msgstr ""
+
+#: ftp/models.py:25
+msgid "hours"
+msgstr ""
+
+#: ftp/models.py:26
+msgid "days"
+msgstr ""
+
+#: ftp/models.py:27
+msgid "weeks"
+msgstr ""
+
 #: indexer/app.py:104
 #, python-format
 msgid "%s is still offline\n"
@@ -143,11 +163,11 @@ msgstr ""
 msgid "Expected 2 parameters, got %d"
 msgstr ""
 
-#: templates/404.html:7
+#: templates/404.html:8
 msgid "Error 404"
 msgstr ""
 
-#: templates/404.html:8
+#: templates/404.html:9
 msgid "The page you asked for couldn't be found."
 msgstr ""
 
@@ -174,11 +194,13 @@ msgstr ""
 msgid "Yoppi Indexer on <a href=\"%(project_url)s\">github.com</a>"
 msgstr ""
 
-#: templates/ftp/file_list.html:18 templates/ftp/ftp_list.html:6
+#: templates/ftp/file_list.html:18
+msgctxt "file name table header"
 msgid "Name"
 msgstr ""
 
 #: templates/ftp/file_list.html:20
+msgctxt "server name table header"
 msgid "Server"
 msgstr ""
 
@@ -187,6 +209,7 @@ msgid "No files to show"
 msgstr ""
 
 #: templates/ftp/file_list.html:56
+msgctxt "previous page"
 msgid "previous"
 msgstr ""
 
@@ -196,14 +219,22 @@ msgid "Page %(files.number)s of %(files.paginator.num_pages)s"
 msgstr ""
 
 #: templates/ftp/file_list.html:59
+msgctxt "next page"
 msgid "next"
 msgstr ""
 
+#: templates/ftp/ftp_list.html:6
+msgctxt "server name table header"
+msgid "Name"
+msgstr ""
+
 #: templates/ftp/ftp_list.html:7
+msgctxt "server size table header"
 msgid "Size"
 msgstr ""
 
 #: templates/ftp/ftp_list.html:8
+msgctxt "table header"
 msgid "Offline for"
 msgstr ""
 
