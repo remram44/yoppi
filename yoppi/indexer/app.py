@@ -163,7 +163,12 @@ class Indexer:
 
         with ServerIndexingLock(address, name) as server:
             ftp.login()
-            ftp.sendcmd('OPTS UTF8 ON')
+            try:
+                ftp.sendcmd('OPTS UTF8 ON')
+            except ftplib.error_perm:
+                # TODO : log this when we have serious logging
+                # Shitty server not handling unicode, brace yourselves
+                pass
 
             # Fetch all the files currently known
             files = dict((f.fullpath(), f) for f in File.objects.filter(server=server))
