@@ -1,15 +1,8 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.utils.translation import pgettext_lazy, ugettext
-from yoppi.indexer.app import Indexer
+from yoppi.indexer.app import get_project_indexer
 from yoppi.ftp.models import FtpServer
 
-from django.conf import settings as django_settings
-
-
-try:
-    settings = django_settings.INDEXER_SETTINGS
-except KeyError:
-    settings = {}
 
 
 class Command(BaseCommand):
@@ -19,7 +12,7 @@ class Command(BaseCommand):
                          "scan the specified IP range to detect FTP servers")
 
     def handle(self, *args, **options):
-        indexer = Indexer(**settings)
+        indexer = get_project_indexer()
 
         try:
             if len(args) == 1:

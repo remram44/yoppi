@@ -7,6 +7,7 @@ from yoppi import settings
 from django.db import IntegrityError
 from django.utils import timezone
 from django.utils.translation import ugettext
+from django.conf import settings as django_settings
 
 import socket
 from exceptions import IOError
@@ -187,3 +188,7 @@ class Indexer:
 
     def run(self, args):
         pass
+
+
+def get_project_indexer():
+    return Indexer(**getattr(django_settings, 'INDEXER_SETTINGS', {}))

@@ -3,15 +3,7 @@ from django.core.management.base import LabelCommand, CommandError, BaseCommand
 from django.utils.encoding import smart_str
 from django.utils.translation import pgettext_lazy, pgettext, ugettext
 from yoppi.ftp.models import FtpServer
-from yoppi.indexer.app import Indexer, ServerAlreadyIndexing
-
-from django.conf import settings as django_settings
-
-
-try:
-    settings = django_settings.INDEXER_SETTINGS
-except KeyError:
-    settings = {}
+from yoppi.indexer.app import ServerAlreadyIndexing, get_project_indexer
 
 
 class Command(BaseCommand):
@@ -32,7 +24,7 @@ class Command(BaseCommand):
 
     def __init__(self):
         super(Command, self).__init__()
-        self.indexer = Indexer(**settings)
+        self.indexer = get_project_indexer()
 
     def handle(self, *args, **options):
         verbosity = options.get('verbosity', False)
