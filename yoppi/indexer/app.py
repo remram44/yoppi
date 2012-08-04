@@ -1,4 +1,5 @@
 import contextlib
+import logging
 from yoppi.ftp.models import FtpServer, File
 from iptools import IP, IPRange, parse_ip_ranges
 from walk_ftp import walk_ftp
@@ -12,7 +13,10 @@ from django.conf import settings as django_settings
 import socket
 from exceptions import IOError
 import ftplib
-from sys import stdout
+
+
+logger = logging.getLogger(__name__)
+
 
 class ServerAlreadyIndexing(Exception):
     pass
@@ -85,7 +89,7 @@ class Indexer:
             return ''
 
     # Scan an IP range
-    def scan(self, min_ip, max_ip, verbose=1):
+    def scan(self, min_ip, max_ip):
         range = IPRange(min_ip, max_ip)
         found = 0
         for ip in range:
@@ -98,40 +102,33 @@ class Indexer:
             except IOError:
                 try:
                     server = FtpServer.objects.get(address=address)
-                    if verbose != 0:
+                    if logger.isEnabledFor(logging.WARN):
                         name = server.display_name()
-                        if not server.online and verbose >= 2:
-                            stdout.write(
-                                    ugettext("%s is still offline\n") % name)
-                        elif server.online and verbose >= 1:
-                            stdout.write(
-                                    ugettext("%s is now offline\n") % name)
+                        if not server.online:
+                            logger.info(ugettext("%s is still offline"), name)
+                        else:
+                            logger.warn(ugettext("%s is now offline"), name)
                     server.online = False
                     server.save()
                 except FtpServer.DoesNotExist:
-                    if verbose >= 3:
-                        stdout.write(ugettext("%s didn't respond\n") % address)
+                    logger.debug(ugettext("%s didn't respond"), address)
             # Server online
             else:
                 found += 1
                 try:
                     server = FtpServer.objects.get(address=address)
-                    if verbose != 0:
+                    if logger.isEnabledFor(logging.WARN):
                         name = server.display_name()
-                        if server.online and verbose >= 2:
-                            stdout.write(
-                                    ugettext("%s is still online\n") % name)
-                        elif not server.online and verbose >= 1:
-                            stdout.write(
-                                    ugettext("%s is now online\n") % name)
+                        if server.online:
+                            logging.info(ugettext("%s is still online"), name)
+                        else:
+                            logging.warn(ugettext("%s is now online"), name)
                     server.online = True
                     server.last_online = timezone.now()
                     server.save()
                 except FtpServer.DoesNotExist:
-                    if verbose >= 1:
-                        stdout.write(
-                                ugettext("discovered new server at %s\n") %
-                                        address)
+                    logger.warn(ugettext("discovered new server at %s\n"),
+                                address)
                     server = FtpServer(
                         address=address, name=self._defaultServerName(address),
                         online=True, last_online=timezone.now())
@@ -166,8 +163,8 @@ class Indexer:
             try:
                 ftp.sendcmd('OPTS UTF8 ON')
             except ftplib.error_perm:
-                # TODO : log this when we have serious logging
-                # Shitty server not handling unicode, brace yourselves
+                logger.warn(ugettext("server %s doesn't seem to handle unicode. "
+                                     "Brace yourselves."), address)
                 pass
 
             # Fetch all the files currently known
