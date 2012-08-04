@@ -51,6 +51,15 @@ def ServerIndexingLock(address, name=None):
         server.save()
 
 
+def ftp_online(address, timeout):
+    try:
+        ftp = ftplib.FTP(timeout=timeout)
+        ftp.connect(address)
+        ftp.close()
+        return True
+    except IOError:
+        return False
+
 def safe_bulk_create(to_insert):
     try:
         BULK_SIZE = settings.DATABASES['default']['BULK_SIZE']
@@ -88,52 +97,53 @@ class Indexer:
         except socket.herror:
             return ''
 
+    def _scan_address(self, address, ftp_object=None):
+        if ftp_online(address, self.timeout):
+            try:
+                if not ftp_object:
+                    ftp_object = FtpServer.objects.get(address=address)
+                if logger.isEnabledFor(logging.WARN):
+                    name = ftp_object.display_name()
+                    if ftp_object.online:
+                        logging.info(ugettext("%s is still online"), name)
+                    else:
+                        logging.warn(ugettext("%s is now online"), name)
+                ftp_object.online = True
+                ftp_object.last_online = timezone.now()
+                ftp_object.save()
+            except FtpServer.DoesNotExist:
+                logger.warn(ugettext("discovered new server at %s\n"),
+                            address)
+                server = FtpServer(
+                    address=address, name=self._defaultServerName(address),
+                    online=True, last_online=timezone.now())
+                server.save()
+            return True
+        else:
+            try:
+                if not ftp_object:
+                    ftp_object = FtpServer.objects.get(address=address)
+                if logger.isEnabledFor(logging.WARN):
+                    name = ftp_object.display_name()
+                    if not ftp_object.online:
+                        logger.info(ugettext("%s is still offline"), name)
+                    else:
+                        logger.warn(ugettext("%s is now offline"), name)
+                ftp_object.online = False
+                ftp_object.save()
+            except FtpServer.DoesNotExist:
+                logger.debug(ugettext("%s didn't respond"), address)
+            return False
+
     # Scan an IP range
     def scan(self, min_ip, max_ip):
-        range = IPRange(min_ip, max_ip)
-        found = 0
-        for ip in range:
-            address = str(ip)
-            try:
-                ftp = ftplib.FTP(timeout=self.timeout)
-                ftp.connect(address)
-                ftp.close()
-            # Server offline
-            except IOError:
-                try:
-                    server = FtpServer.objects.get(address=address)
-                    if logger.isEnabledFor(logging.WARN):
-                        name = server.display_name()
-                        if not server.online:
-                            logger.info(ugettext("%s is still offline"), name)
-                        else:
-                            logger.warn(ugettext("%s is now offline"), name)
-                    server.online = False
-                    server.save()
-                except FtpServer.DoesNotExist:
-                    logger.debug(ugettext("%s didn't respond"), address)
-            # Server online
-            else:
-                found += 1
-                try:
-                    server = FtpServer.objects.get(address=address)
-                    if logger.isEnabledFor(logging.WARN):
-                        name = server.display_name()
-                        if server.online:
-                            logging.info(ugettext("%s is still online"), name)
-                        else:
-                            logging.warn(ugettext("%s is now online"), name)
-                    server.online = True
-                    server.last_online = timezone.now()
-                    server.save()
-                except FtpServer.DoesNotExist:
-                    logger.warn(ugettext("discovered new server at %s\n"),
-                                address)
-                    server = FtpServer(
-                        address=address, name=self._defaultServerName(address),
-                        online=True, last_online=timezone.now())
-                    server.save()
-        return found
+        return sum(self._scan_address(str(ip))
+            for ip in IPRange(min_ip, max_ip))
+
+    def watchdog(self):
+        """Check if the known ftps are online"""
+        for ftp in FtpServer.objects.all():
+            self._scan_address(ftp.address, ftp)
 
     # Index a server
     def index(self, address):
