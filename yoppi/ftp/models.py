@@ -28,10 +28,7 @@ class FtpServer(models.Model):
     )
 
     def display_name(self):
-        if self.name:
-            return self.name
-        else:
-            return self.address
+        return self.name or self.address
 
     def __unicode__(self):
         return self.address

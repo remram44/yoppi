@@ -2,7 +2,7 @@
 
 {% load i18n %}
 
-{% block page_title %}{% blocktrans %}Listing - {{ active_server.display_name }} - Yoppi{% endblocktrans %}{% endblock %}
+{% block page_title %}{% blocktrans with server_name=active_server.display_name %}Listing - {{ server_name }} - Yoppi{% endblocktrans %}{% endblock %}
 
 {% block title %}
     {{ active_server.display_name }}
