@@ -1,8 +1,8 @@
 import logging
 from optparse import make_option
-from django.core.management.base import LabelCommand, CommandError, BaseCommand
+from django.core.management.base import CommandError, BaseCommand
 from django.utils.encoding import smart_str
-from django.utils.translation import pgettext_lazy, pgettext, ugettext, gettext_lazy
+from django.utils.translation import pgettext_lazy, ugettext
 from yoppi.ftp.models import FtpServer
 from yoppi.indexer.app import ServerAlreadyIndexing, get_project_indexer
 from yoppi.indexer.management.commands import setup_logging
@@ -46,17 +46,8 @@ class Command(BaseCommand):
                 self.index(address)
 
     def index(self, address):
-        logger.warn(pgettext("indexing in progress from 'index' command",
-                             "Indexing '%s'..."), address)
         try:
-            nb_files, total_size, to_insert, to_delete = \
-                    self.indexer.index(address)
-            logger.warn(gettext_lazy("%(nb_files)d files found on %(address)s, "
-                                      "%(total_size)d b"),
-                        dict(nb_files=nb_files, address=address,
-                             total_size=total_size))
-            logger.info(gettext_lazy("%(ins)d insertions, %(dele)d deletions"),
-                        dict(ins=len(to_insert), dele=len(to_delete)))
+            self.indexer.index(address)
         except ServerAlreadyIndexing as e:
             raise CommandError(
                     ugettext("%s is already being indexed") % address, e)

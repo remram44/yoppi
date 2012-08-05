@@ -7,7 +7,7 @@ from yoppi import settings
 
 from django.db import IntegrityError
 from django.utils import timezone
-from django.utils.translation import ugettext
+from django.utils.translation import ugettext, pgettext, gettext_lazy
 from django.conf import settings as django_settings
 
 import socket
@@ -83,6 +83,7 @@ class Indexer:
             SCAN_DELAY=30*60, INDEX_DELAY=2*60*60,
             SEARCH_ON_USER=True, USER_IN_RANGE_ONLY=True,
             TIMEOUT=2):
+        # TODO : these are not used for now, but I leave them here for Remram's big indexer overhault
         self.ip_ranges = parse_ip_ranges(IP_RANGES)
         self.scan_delay = SCAN_DELAY
         self.index_delay = INDEX_DELAY
@@ -147,6 +148,9 @@ class Indexer:
 
     # Index a server
     def index(self, address):
+        logger.warn(pgettext("indexing in progress from 'index' command",
+                             "Indexing '%s'..."), address)
+
         # 'address' must be a valid IP address
         if not isinstance(address, IP):
             address = IP(address)
@@ -196,10 +200,23 @@ class Indexer:
             # It will get save()'d when we exit the 'with' block
 
             ftp.close()
+            logger.warn(gettext_lazy("%(nb_files)d files found on %(address)s, "
+                                     "%(total_size)d b"),
+                        dict(nb_files=nb_files, address=address,
+                             total_size=total_size))
+            logger.info(gettext_lazy("%(ins)d insertions, %(dele)d deletions"),
+                        dict(ins=len(to_insert), dele=len(to_delete)))
             return nb_files, total_size, to_insert, to_delete
 
     def run(self, args):
-        pass
+        """Stupid cron job that scans the whole range, then index all the ftps."""
+        for ip in self.ip_ranges:
+            self._scan_address(str(ip))
+        for ftp in FtpServer.objects.all():
+            try:
+                self.index(ftp.address)
+            except socket.error:
+                logger.info('%s is offline, not indexing.', ftp.address)
 
 
 def get_project_indexer():
