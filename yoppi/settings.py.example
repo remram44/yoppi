@@ -50,8 +50,8 @@ TIME_ZONE = 'America/Chicago'
 LANGUAGE_CODE = 'en-us'
 gettext = lambda s: s
 LANGUAGES = (
-    ('en-US', gettext("English")),
-    ('fr-FR', gettext("French")),
+    ('en', gettext("English")),
+    ('fr', gettext("French")),
 )
 
 LOCALE_DIRS = (os.path.join(os.path.dirname(__file__), 'locale'))
