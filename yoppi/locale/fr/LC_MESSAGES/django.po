@@ -3,20 +3,20 @@
 # This file is distributed under the same license as the Yoppi package.
 #
 # Translators:
-# Rémi  <remirampin@gmail.com>, 2012.
+# Rémi Rampin <remirampin@gmail.com>, 2012.
 msgid ""
 msgstr ""
 "Project-Id-Version: Yoppi Indexer\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-24 21:02+0200\n"
-"PO-Revision-Date: 2012-10-09 18:47+0200\n"
+"Report-Msgid-Bugs-To: https://github.com/supelec-rezo/yoppi/issues\n"
+"POT-Creation-Date: 2012-04-24 20:35+0200\n"
+"PO-Revision-Date: 2012-10-09 19:09+0200\n"
 "Last-Translator: Rémi Rampin <remirampin@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"Language: fr\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: settings.py:56
 msgid "English"
@@ -47,14 +47,14 @@ msgid "weeks"
 msgstr "semaines"
 
 #: indexer/app.py:109
-#, fuzzy, python-format
+#, python-format
 msgid "%s is still online"
-msgstr "%s est toujours en ligne\n"
+msgstr "%s est toujours en ligne"
 
 #: indexer/app.py:111
-#, fuzzy, python-format
+#, python-format
 msgid "%s is now online"
-msgstr "%s est maintenant en ligne\n"
+msgstr "%s est maintenant en ligne"
 
 #: indexer/app.py:116
 #, python-format
@@ -62,19 +62,19 @@ msgid "discovered new server at %s\n"
 msgstr "découverte d'un nouveau serveur à %s\n"
 
 #: indexer/app.py:130
-#, fuzzy, python-format
+#, python-format
 msgid "%s is still offline"
-msgstr "%s est toujours hors-ligne\n"
+msgstr "%s est toujours hors-ligne"
 
 #: indexer/app.py:132
-#, fuzzy, python-format
+#, python-format
 msgid "%s is now offline"
-msgstr "%s est maintenant hors-ligne\n"
+msgstr "%s est maintenant hors-ligne"
 
 #: indexer/app.py:136
-#, fuzzy, python-format
+#, python-format
 msgid "%s didn't respond"
-msgstr "%s n'a pas répondu\n"
+msgstr "%s n'a pas répondu"
 
 #: indexer/app.py:152
 #, python-format
@@ -85,12 +85,12 @@ msgstr "Indexation de \"%s\"..."
 #: indexer/app.py:180
 #, python-format
 msgid "server %s doesn't seem to handle unicode. "
-msgstr ""
+msgstr "le serveur %s n'a pas l'air de gérer l'unicode"
 
 #: indexer/app.py:203
-#, fuzzy, python-format
+#, python-format
 msgid "%(nb_files)d files found on %(address)s, "
-msgstr "%(nb_files)d fichiers trouvés sur %(address)s, %(total_size)d o"
+msgstr "%(nb_files)d fichiers trouvés sur %(address)s"
 
 #: indexer/app.py:207
 #, python-format
@@ -219,7 +219,6 @@ msgid "Name"
 msgstr "Nom"
 
 #: templates/ftp/file_list.html:19
-#, fuzzy
 msgctxt "file size table header"
 msgid "Size"
 msgstr "Taille"
@@ -294,6 +293,6 @@ msgid "Search: %(query)s"
 msgstr "Recherche : %(query)s"
 
 #: templates/ftp/server.html:5
-#, fuzzy, python-format
+#, python-format
 msgid "Listing - %(server_name)s - Yoppi"
-msgstr "Liste - %(active_server.display_name)s - Yoppi"
+msgstr "Liste - %(server_name)s - Yoppi"
