@@ -4,10 +4,7 @@
 
 {% block page_title %}{% trans "Search results - Yoppi" %}{% endblock %}
 
-{% block title %}
-    {% blocktrans %}Search: {{ query }}{% endblocktrans %}
-{% endblock %}
-
 {% block content %}
+    <h2>{% trans "Search:" %} {{ query }}</h2>
     {% include "ftp/file_list.html" %}
 {% endblock %}

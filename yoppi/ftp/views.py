@@ -11,16 +11,17 @@ def all_servers():
 
 
 def decompose_path(server, path):
-    hierarchy = [{'name': server, 'url': reverse('yoppi.ftp.views.server', args=[server, ''])}]
+    address = server.address
+    hierarchy = [{'name': server.display_name(), 'url': reverse('yoppi.ftp.views.server', args=[address, ''])}]
     if path != '':
         i = 0
         j = path.find('/', 1)
         while j != -1:
-            hierarchy += [{'name': path[(i+1):j], 'url': reverse('yoppi.ftp.views.server', args=[server, path[:j]])}]
+            hierarchy += [{'name': path[(i+1):j], 'url': reverse('yoppi.ftp.views.server', args=[address, path[:j]])}]
             i = j
             j = path.find('/', j+1)
 
-        hierarchy += [{'name': path[(i+1):], 'url': reverse('yoppi.ftp.views.server', args=[server, path]), 'current': True}]
+        hierarchy += [{'name': path[(i+1):], 'url': reverse('yoppi.ftp.views.server', args=[address, path]), 'current': True}]
     else:
         hierarchy[0]['current'] = True
 
@@ -40,7 +41,7 @@ def server(request, address, path=''):
         path = path[:-1]
     server = get_object_or_404(FtpServer, address=address)
 
-    hierarchy = decompose_path(server.address, path)
+    hierarchy = decompose_path(server, path)
 
     files = (server.files.filter(path=path)
              .order_by('-is_directory', 'name').select_related('server'))
