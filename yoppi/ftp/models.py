@@ -5,10 +5,10 @@ from django.utils.translation import ugettext_lazy
 
 class FtpServer(models.Model):
     address = models.CharField(
-            "server's DNS name or IP address",
-            primary_key=True, max_length=200)
+            "server's IP address",
+            primary_key=True, max_length=15)
     name = models.CharField(
-            "optionnal readable name", max_length=30, blank=True, default='')
+            "optionnal readable name", max_length=200, blank=True, default='')
     online = models.BooleanField(default=True)
     size = models.IntegerField(default=0)
     last_online = models.DateTimeField(default=lambda: timezone.now())

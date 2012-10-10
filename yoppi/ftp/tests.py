@@ -57,9 +57,9 @@ class BasicTest(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_download(self):
-        response = self.client.get('/download/remram/todo.txt', follow=False)
+        response = self.client.get('/download/192.168.0.37/todo.txt', follow=False)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['Location'], 'ftp://remram/todo.txt')
+        self.assertEqual(response['Location'], 'ftp://192.168.0.37/todo.txt')
 
         response = self.client.get('/download/192.168.0.42/dir/icon.png', follow=False)
         self.assertEqual(response.status_code, 302)
