@@ -57,7 +57,7 @@ def ftp_online(address, timeout):
         ftp.connect(address)
         ftp.close()
         return True
-    except IOError:
+    except ftplib.all_errors:
         return False
 
 def safe_bulk_create(to_insert):
@@ -160,7 +160,7 @@ class Indexer:
             ftp = ftplib.FTP(timeout=self.timeout)
             ftp.connect(address)
         # Server offline
-        except IOError:
+        except ftplib.all_errors:
             try:
                 server = FtpServer.objects.get(address=address)
                 if server.online:
