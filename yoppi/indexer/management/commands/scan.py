@@ -1,13 +1,13 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.utils.translation import pgettext_lazy, ugettext
 from yoppi.indexer.app import get_project_indexer
-from yoppi.indexer.management.commands import setup_logging
+from yoppi.indexer.management.commands import setup_logging, fixed_pgettext_lazy
 
 
 class Command(BaseCommand):
-    args = pgettext_lazy("args for 'scan' command",
+    args = fixed_pgettext_lazy("args for 'scan' command",
                          "<first IP> [last IP]")
-    help = pgettext_lazy("help for 'scan' command",
+    help = fixed_pgettext_lazy("help for 'scan' command",
                          "scan the specified IP range to detect FTP servers")
 
     def handle(self, *args, **options):

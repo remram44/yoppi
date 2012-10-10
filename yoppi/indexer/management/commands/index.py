@@ -5,7 +5,7 @@ from django.utils.encoding import smart_str
 from django.utils.translation import pgettext_lazy, ugettext
 from yoppi.ftp.models import FtpServer
 from yoppi.indexer.app import ServerAlreadyIndexing, get_project_indexer
-from yoppi.indexer.management.commands import setup_logging
+from yoppi.indexer.management.commands import setup_logging, fixed_pgettext_lazy
 
 
 logger = logging.getLogger(__name__)
@@ -17,14 +17,14 @@ class Command(BaseCommand):
             action='store_true',
             dest='all',
             default=False,
-            help=pgettext_lazy("'index' command", "Index all known ftps")),
+            help=fixed_pgettext_lazy("'index' command", "Index all known ftps")),
         )
 
-    args = pgettext_lazy("args for 'index' command",
+    args = fixed_pgettext_lazy("args for 'index' command",
                          "<server_address> [server_address [...]]")
-    help = pgettext_lazy("help for 'index' command",
+    help = fixed_pgettext_lazy("help for 'index' command",
                          "(re-)index the specified FTP server")
-    label = pgettext_lazy("labels received by the 'index' command",
+    label = fixed_pgettext_lazy("labels received by the 'index' command",
                           "address")
 
     def __init__(self):
