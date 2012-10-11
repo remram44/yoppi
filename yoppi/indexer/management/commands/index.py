@@ -47,5 +47,5 @@ class Command(BaseCommand):
         except ServerAlreadyIndexing as e:
             raise CommandError(
                     ugettext(u"%s is already being indexed") % address, e)
-        except (ValueError, IOError) as e:
+        except (ValueError, IOError, UnicodeDecodeError) as e:
             raise CommandError("%s: %s" % (e.__class__.__name__, e))

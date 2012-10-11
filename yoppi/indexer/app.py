@@ -284,6 +284,9 @@ class Indexer:
             except socket.error:
                 logger.info(ugettext(u"%s is offline, not indexing."),
                             ftp.address)
+            except UnicodeDecodeError, e:
+                logger.error('got %s indexing %s', e.__class__.__name__,
+                             ftp.address)
 
 
 def get_project_indexer():
