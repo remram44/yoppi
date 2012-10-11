@@ -4,12 +4,14 @@ from yoppi.ftp.models import FtpServer, File
 from iptools import IP, IPRange, parse_ip_ranges
 from walk_ftp import walk_ftp
 from yoppi import settings
+from models import IndexerParameter
 
 from django.db import IntegrityError
 from django.utils import timezone
 from django.utils.translation import ugettext, pgettext, gettext_lazy
 from django.conf import settings as django_settings
 
+from itertools import izip
 import socket
 from exceptions import IOError
 import ftplib
@@ -81,12 +83,16 @@ class Indexer:
             self,
             IP_RANGES=(),
             SCAN_DELAY=30*60, INDEX_DELAY=2*60*60,
+            SCAN_COUNT=200, INDEX_COUNT=10,
+            PRUNE_FTP_TIME=7*24*3600,
             SEARCH_ON_USER=True, USER_IN_RANGE_ONLY=True,
             TIMEOUT=2):
-        # TODO : these are not used for now, but I leave them here for Remram's big indexer overhault
         self.ip_ranges = parse_ip_ranges(IP_RANGES)
         self.scan_delay = SCAN_DELAY
         self.index_delay = INDEX_DELAY
+        self.scan_count = SCAN_COUNT
+        self.index_count = INDEX_COUNT
+        self.prune_ftp_time = PRUNE_FTP_TIME
         self.search_on_user = SEARCH_ON_USER
         self.user_in_range_only = USER_IN_RANGE_ONLY
         self.timeout = TIMEOUT
@@ -208,10 +214,43 @@ class Indexer:
                         dict(ins=len(to_insert), dele=len(to_delete)))
             return nb_files, total_size, to_insert, to_delete
 
+    def getConfig(self, name):
+        try:
+            p = IndexerParameter.objects.get(name=name)
+            return p.value
+        except IndexerParameter.DoesNotExist:
+            return None
+
+    def setConfig(self, name, value):
+        p = IndexerParameter(name, value)
+        p.save() # Overwrites any existing value
+
     def run(self, args):
-        """Stupid cron job that scans the whole range, then index all the ftps."""
-        for ip in self.ip_ranges:
-            self._scan_address(str(ip))
+        # Scan the configured number of addresses (or all the addresses in the
+        # configured range) from the last scanned address
+        # Uses: SCAN_DELAY, SCAN_COUNT
+        last_scanned_ip = self.getConfig('last_scanned_ip')
+        if (last_scanned_ip is None or
+                not self.ip_ranges.contains(last_scanned_ip)):
+            last_scanned_ip = self.ip_ranges.first()
+
+        try:
+            for i, ip in izip(xrange(1, self.scan_count),
+                              self.ip_ranges.loop_iter_from(last_scanned_ip)):
+                self._scan_address(ip)
+                last_scanned_ip = ip
+        except KeyboardInterrupt:
+            pass # Stop here
+
+        self.setConfig('last_scanned_ip', str(last_scanned_ip))
+
+        # TODO : Check the known FTPs (all of them?)
+
+        # TODO : Remove the old FTPs (that haven't been online in a long time)
+        # Uses: PRUNE_FTP_TIME
+
+        # TODO : Index the FTPs that have been indexed last
+        # Uses: INDEX_DELAY, INDEX_COUNT
         for ftp in FtpServer.objects.all():
             try:
                 self.index(ftp.address)
