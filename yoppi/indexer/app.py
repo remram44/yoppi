@@ -13,7 +13,7 @@ from django.conf import settings as django_settings
 
 from itertools import izip
 import socket
-from exceptions import IOError
+import time
 import ftplib
 
 
@@ -86,7 +86,7 @@ class Indexer:
             SCAN_COUNT=200, INDEX_COUNT=10,
             PRUNE_FTP_TIME=7*24*3600,
             SEARCH_ON_USER=True, USER_IN_RANGE_ONLY=True,
-            TIMEOUT=2):
+            TIMEOUT=2, HOSTNAME_STRIP_SUFFIX=()):
         self.ip_ranges = parse_ip_ranges(IP_RANGES)
         self.scan_delay = SCAN_DELAY
         self.index_delay = INDEX_DELAY
@@ -96,6 +96,7 @@ class Indexer:
         self.search_on_user = SEARCH_ON_USER
         self.user_in_range_only = USER_IN_RANGE_ONLY
         self.timeout = TIMEOUT
+        self.hostname_strip_suffix = HOSTNAME_STRIP_SUFFIX
 
     def _defaultServerName(self, address):
         try:
@@ -105,6 +106,11 @@ class Indexer:
             return ''
 
     def _scan_address(self, address, ftp_object=None):
+        if isinstance(address, IP):
+            address = str(address)
+        elif not isinstance(address, str):
+            raise TypeError("_scan_address expected IP or str, got %s" %
+                    type(address))
         if ftp_online(address, self.timeout):
             try:
                 if not ftp_object:
@@ -179,70 +185,91 @@ class Indexer:
         name = self._defaultServerName(address)
 
         with ServerIndexingLock(address, name) as server:
-            ftp.login()
             try:
-                ftp.sendcmd('OPTS UTF8 ON')
-            except ftplib.error_perm:
-                logger.warn(ugettext("server %s doesn't seem to handle unicode. "
-                                     "Brace yourselves."), address)
-                pass
+                ftp.login()
+                try:
+                    ftp.sendcmd('OPTS UTF8 ON')
+                except ftplib.error_perm:
+                    logger.warn(ugettext("server %s doesn't seem to handle unicode. "
+                                         "Brace yourselves."), address)
 
-            # Fetch all the files currently known
-            files = dict((f.fullpath(), f) for f in File.objects.filter(server=server))
+                # Fetch all the files currently known
+                files = dict((f.fullpath(), f) for f in File.objects.filter(server=server))
 
-            # Recursively walk the FTP
-            to_insert, to_delete, nb_files, total_size = \
-                    walk_ftp(server, ftp, files)
-            # The file that were not found need to be deleted as well
-            to_delete.extend(f.id for f in files.itervalues())
+                # Recursively walk the FTP
+                to_insert, to_delete, nb_files, total_size = \
+                        walk_ftp(server, ftp, files)
+                # The file that were not found need to be deleted as well
+                to_delete.extend(f.id for f in files.itervalues())
 
-            # Update the files in the database
-            File.objects.filter(id__in=to_delete).delete()
+                # Update the files in the database
+                File.objects.filter(id__in=to_delete).delete()
 
-            safe_bulk_create(to_insert)
+                safe_bulk_create(to_insert)
 
-            # Update the server
-            server.size = total_size
-            # It will get save()'d when we exit the 'with' block
+                # Update the server
+                server.size = total_size
+                # It will get save()'d when we exit the 'with' block
 
-            ftp.close()
-            logger.warn(gettext_lazy("%(nb_files)d files found on %(address)s, "
-                                     "%(total_size)d b"),
-                        dict(nb_files=nb_files, address=address,
-                             total_size=total_size))
-            logger.info(gettext_lazy("%(ins)d insertions, %(dele)d deletions"),
-                        dict(ins=len(to_insert), dele=len(to_delete)))
-            return nb_files, total_size, to_insert, to_delete
+                ftp.close()
+                logger.warn(gettext_lazy("%(nb_files)d files found on %(address)s, "
+                                         "%(total_size)d b"),
+                            dict(nb_files=nb_files, address=address,
+                                 total_size=total_size))
+                logger.info(gettext_lazy("%(ins)d insertions, %(dele)d deletions"),
+                            dict(ins=len(to_insert), dele=len(to_delete)))
+                return nb_files, total_size, to_insert, to_delete
+            except ftplib.all_errors, e:
+                logger.error(
+                        gettext_lazy(u"got error indexing %(server)s: "
+                                     "%(error)s"),
+                        dict(server=address, error=e.__class__.__name__))
 
-    def getConfig(self, name):
+    def getConfig(self, name, default=None):
         try:
             p = IndexerParameter.objects.get(name=name)
             return p.value
         except IndexerParameter.DoesNotExist:
-            return None
+            return default
 
     def setConfig(self, name, value):
-        p = IndexerParameter(name, value)
+        p = IndexerParameter(name, str(value))
         p.save() # Overwrites any existing value
 
     def run(self, args):
         # Scan the configured number of addresses (or all the addresses in the
         # configured range) from the last scanned address
+        # Only the time of last scan of the first address of the ranges is
+        # stored to save space; it will be checked against SCAN_DELAY
         # Uses: SCAN_DELAY, SCAN_COUNT
         last_scanned_ip = self.getConfig('last_scanned_ip')
+        first_ip = self.ip_ranges.first()
         if (last_scanned_ip is None or
                 not self.ip_ranges.contains(last_scanned_ip)):
-            last_scanned_ip = self.ip_ranges.first()
+            last_scanned_ip = first_ip
 
         try:
+            # TODO : this needs to run in parallel. We're not even io-bound,
+            # we're waiting for a timeout
             for i, ip in izip(xrange(1, self.scan_count),
                               self.ip_ranges.loop_iter_from(last_scanned_ip)):
+                # Rate limiting: check last time indexed for first address
+                # last_scan_first_ip is UTC
+                if ip == first_ip:
+                    try:
+                        last_scan_first_ip = int(self.getConfig(
+                                'last_scan_first_ip',
+                                0))
+                        if time.time() - last_scan_first_ip < self.scan_delay:
+                            logger.info("Stopping due to SCAN_DELAY")
+                    except ValueError:
+                        pass
+                    self.setConfig('last_scan_first_ip', time.time())
+
                 self._scan_address(ip)
                 last_scanned_ip = ip
-        except KeyboardInterrupt:
-            pass # Stop here
-
-        self.setConfig('last_scanned_ip', str(last_scanned_ip))
+        finally:
+            self.setConfig('last_scanned_ip', str(last_scanned_ip))
 
         # TODO : Check the known FTPs (all of them?)
 
