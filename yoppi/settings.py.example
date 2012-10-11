@@ -15,14 +15,35 @@ INDEXER_SETTINGS = {
     'IP_RANGES': (
         ('160.228.152.1', '160.228.159.254'),
     ),
-    # Minimum delay between two scans of the IP ranges
+    # Minimum delay between two scans of a given IP
     'SCAN_DELAY': 30*60, # 30 minutes
     # Minimum delay between two indexations of a given FTP server
     'INDEX_DELAY': 2*60*60, # 2 hours
-    # Whether to check for FTP servers on connecting users
+    # Number of IPs to scan in the given ranges in one go
+    'SCAN_COUNT': 200,
+    # Number of FTP servers to index in one go
+    'INDEX_COUNT': 10,
+    # Time after which a server that has remained offline will be forgotten
+    'PRUNE_FTP_TIME': 7*24*3600, # 1 week
+    # Whether to check for FTP servers on users connecting to the website
+    # This is particularly useful if you don't want to scan IP ranges to
+    # discover FTP servers
     'SEARCH_ON_USER': True,
-    # Whether to check only on users connecting from one of the IP_RANGES
+    # If this is True, the user connecting to the website will only be checked
+    # if he lies in the IP_RANGES
     'USER_IN_RANGE_ONLY': True,
+    # FTP connection timeout, in seconds
+    # You can lower this to increase scanning rate if you are on a fast
+    # network with fast-responding servers; however a value too low can cause
+    # available servers to appear offline
+    'TIMEOUT': 2,
+    # A server's hostname is used as default for its name by default;
+    # however a common suffix can be stripped by adding it to this list
+    # This is useful if you are on a LAN and all machines have a common domain
+    'HOSTNAME_STRIP_SUFFIX': (
+        '.rez-gif.supelec.fr',
+        '.larez.fr',
+    )
 }
 
 DATABASES = {
