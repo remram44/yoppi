@@ -18,9 +18,10 @@ class BasicTest(TestCase):
         servers = response.context['servers']
 
         # Check the values
-        self.assertEqual(len(servers), 3)
+        self.assertEqual(len(servers), 4)
         names = [s.display_name() for s in servers]
-        self.assertEqual(names, [u"192.168.0.12", u"Madjar's bazaar", u"Remram's room"])
+        self.assertEqual(names, [u'192.168.0.12', u"Madjar's bazaar",
+                                 u'My paper ftp', u"Remram's room"])
 
     def test_files_list(self):
         expected_files = [
