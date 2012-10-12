@@ -16,8 +16,8 @@
     <thead>
     <tr class="titre">
         <th>{% trans "Name" context "file name table header" %}</th>
-        <th>{% trans "Size" context "file size table header" %}</th>
-    {% if query %}<th>{% trans "Server" context "server name table header" %}</th>{% endif %}
+        <th class="size-column">{% trans "Size" context "file size table header" %}</th>
+    {% if query %}<th class="ftp-column">{% trans "Server" context "server name table header" %}</th>{% endif %}
     </tr>
     </thead>
     <tbody>
@@ -30,9 +30,9 @@
                 {{ file.name }}
               </a>
             </td>
-            <td width="100" align="right">{{ file.size|filesizeformat }}</td>
+            <td class="size-column">{{ file.size|filesizeformat }}</td>
             {% if query %}
-                <td><a href="{{ file.server.get_absolute_url }}">
+                <td  class="ftp-column"><a href="{{ file.server.get_absolute_url }}">
                     <i class="icon-{{ file.server.icon }}"></i>
                     {{ file.server.display_name }}</a></td>
             {% endif %}

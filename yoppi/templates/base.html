@@ -5,30 +5,11 @@
 <head>
     <meta charset="utf-8">
     <title>{% block page_title %}Yoppi{% endblock %}</title>
-    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.min.css" type="text/css" />
-    <style>
-        body {
-            padding-top: 60px;
-        }
-        .sidebar-nav {
-            padding: 9px 0;
-        }
-        #mainContent {
-            float:right;
-        }
-        #sidebar {
-             margin-left: 0;
-         }
-
-        @media (max-width: 767px) {
-            #mainContent {
-                float:none;
-            }
-        }
-
-    </style>
-    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap-responsive.min.css" type="text/css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/layout.css" type="text/css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap-responsive.min.css" type="text/css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/custom.css" type="text/css" />
 </head>
 <body>
 <div class="navbar navbar-fixed-top navbar-inverse">

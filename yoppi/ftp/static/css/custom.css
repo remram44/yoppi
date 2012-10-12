@@ -1,0 +1,9 @@
+/* Fixes for the file list */
+.table .size-column {
+    text-align: right;
+}
+@media (min-width: 767px) {
+    .table .ftp-column {
+        padding-left: 25px;
+    }
+}
