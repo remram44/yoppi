@@ -1,37 +1,24 @@
 {% load i18n %}
 
-<table class="table">
-    <thead>
-    <tr class="titre">
-        <th>{% trans "Name" context "server name table header" %}</th>
-        <th>{% trans "Size" context "server size table header" %}</th>
-        <th>{% trans "Offline for" context "table header" %}</th>
-    </tr>
-    </thead>
-    <tbody><!-- TODO : active ftp -->
-    {% for server in servers %}
-        <tr{% if active_server == server %} {% endif %}>
-            <td><a href="{{ server.get_absolute_url }}">
-                {% if server.online %}
-                    <i class="icon-folder-open"></i>
-                {% else %}
-                    <i class="icon-off"></i>
-                {% endif %}{{ server.display_name }}</a></td>
-            <td>{{ server.size|filesizeformat }}</td>
-            <td>
-                {% if server.online %}
-                    -
-                {% else %}
-                    {{ server.display_lastonline }}
-                {% endif %}
-            </td>
-        </tr>
-    {% empty %}
-        <tr>
-            <td>{% trans "No servers..." %}</td>
-            <td></td>
-            <td></td>
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
+<div class="well sidebar-nav">
+    <ul class="nav nav-list">
+        {% if servers %}
+            {% for server in servers %}
+                <li{% if active_server == server %} class="active"{% endif %}>
+                    <a href="{{ server.get_absolute_url }}" {% if not server.online %}class="muted"{% endif %}>
+                        <h4><i class="{% if server.online %}icon-folder-open{% else %}icon-ban-circle{% endif %}"></i>
+                            {{ server.display_name|escape }}
+                            <small>{{ server.size|filesizeformat }}</small>
+                        </h4>
+                        {% if not server.online %}
+                            {{ server.display_lastonline }} ago
+                        {% endif %}</a>
+                </li>
+            {% endfor %}
+        {% else %}
+            <li>
+                No servers...
+            </li>
+        {% endif %}
+    </ul>
+</div>
