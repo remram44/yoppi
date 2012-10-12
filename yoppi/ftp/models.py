@@ -1,3 +1,4 @@
+import mimetypes
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext, ugettext_lazy
@@ -63,12 +64,23 @@ class FtpServer(models.Model):
         return 'folder-open' if self.online else 'ban-circle'
 
 
+mimetypes.add_type('video/x-matroska', '.mkv')
+
 ICONS = {
-    'avi': 'film',
-    'mkv': 'film',
-    'mp3': 'music',
-    'ogg': 'music',
+    'video': 'film',
+    'audio': 'music',
+    'application/x-flac': 'music',
 }
+
+def guess_file_icon(filename):
+    type, encoding = mimetypes.guess_type(filename)
+    if not type:
+        return 'file'
+    try:
+        return ICONS[type]
+    except KeyError:
+        general, specific = type.split('/')
+        return ICONS.get(general, 'file')
 
 
 class File(models.Model):
@@ -95,5 +107,4 @@ class File(models.Model):
         if self.is_directory:
             return 'folder-open'
         else:
-            ext = self.name.rsplit('.', 1)[-1]
-            return ICONS.get(ext, 'file')
+            return guess_file_icon(self.name)

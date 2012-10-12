@@ -1,7 +1,7 @@
 from django.test import TestCase, Client
 from django.utils import timezone, translation
 
-from yoppi.ftp.models import FtpServer
+from yoppi.ftp.models import FtpServer, guess_file_icon
 
 
 class BasicTest(TestCase):
@@ -88,3 +88,16 @@ class BasicTest(TestCase):
         self.assertEqual(FtpServer._format_duration(
                 ((1024 * 24 + 3) * 60 + 18) * 60 + 54),
                 u"146 weeks")
+
+
+class FileIconsTest(TestCase):
+    def test_common_extensions(self):
+        self.assertEqual(guess_file_icon('tagada.avi'), 'film')
+        self.assertEqual(guess_file_icon('tagada.mkv'), 'film')
+        self.assertEqual(guess_file_icon('tagada.mp3'), 'music')
+
+    def test_uppercase(self):
+        self.assertEqual(guess_file_icon('tagada.MP3'), 'music')
+
+    def test_application_x(self):
+        self.assertEqual(guess_file_icon('tagada.flac'), 'music')
