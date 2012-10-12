@@ -7,4 +7,21 @@
 {% block content %}
     <h2>{% trans "Search:" %} {{ query }}</h2>
     {% include "ftp/file_list.html" %}
+    {% if not page.has_other_pages %}
+        <ul class="pager">
+            {% if files.has_previous %}
+                <li><a href="?query={{ query }}&page={{ files.previous_page_number }}">
+            {% else %}
+                <li class="disabled"><a>
+            {% endif %}
+            {% trans "previous" context "previous page" %}</a></li>
+            <li>{% blocktrans with number=files.number num_pages=files.paginator.num_pages %}Page {{ number }} of {{ num_pages }}{% endblocktrans %}</li>
+            {% if files.has_next %}
+                <li><a href="?query={{ query }}&page={{ files.next_page_number }}">
+            {% else %}
+                <li class="disabled"><a>
+            {% endif %}
+            {% trans "next" context "next page" %}</a></li>
+        </ul>
+    {% endif %}
 {% endblock %}
