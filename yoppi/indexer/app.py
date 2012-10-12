@@ -1,3 +1,4 @@
+from concurrent.futures import ThreadPoolExecutor
 import contextlib
 import datetime
 import ftplib
@@ -156,14 +157,16 @@ class Indexer:
 
     # Scan an IP range
     def scan(self, min_ip, max_ip):
-        return sum(self._scan_address(str(ip))
-            for ip in IPRange(min_ip, max_ip))
+        with ThreadPoolExecutor(max_workers=64) as executor:
+            executor.map(self._scan_address, IPRange(min_ip, max_ip))
 
     # Check all the already-discovered FTPs
     def check_all_statuses(self):
-        """Check if the known ftps are online"""
-        for ftp in FtpServer.objects.all():
-            self._scan_address(IP(ftp.address), ftp)
+        """Check if the known FTPs are online"""
+        all_servers = list((IP(ftp.address), ftp)
+                           for ftp in FtpServer.objects.all())
+        with ThreadPoolExecutor(max_workers=64) as executor:
+            executor.map(self._scan_address, all_servers)
 
     # Check a specific list of FTPs
     def check_statuses(self, servers):
@@ -275,27 +278,31 @@ class Indexer:
             last_scanned_ip = first_ip
 
         try:
-            # TODO : this needs to run in parallel. We're not even io-bound,
-            # we're waiting for a timeout
-            for i, ip in izip(xrange(1, self.scan_count),
-                              self.ip_ranges.loop_iter_from(last_scanned_ip)):
-                # Rate limiting: check last time indexed for first address
-                # last_scan_first_ip is UTC
-                if ip == first_ip:
-                    try:
-                        last_scan_first_ip = int(self.getConfig(
-                                'last_scan_first_ip',
-                                0))
-                        if time.time() - last_scan_first_ip < self.scan_delay:
-                            logger.info("Stopping due to SCAN_DELAY")
-                    except ValueError:
-                        pass
-                    self.setConfig('last_scan_first_ip', time.time())
+            def ip_generator():
+                for i, ip in izip(xrange(1, self.scan_count),
+                                  self.ip_ranges.loop_iter_from(
+                                        ip_generator.last_scanned_ip)):
+                    # Rate limiting: check last time indexed for first address
+                    # last_scan_first_ip is UTC
+                    if ip == first_ip:
+                        try:
+                            last_scan_first_ip = int(self.getConfig(
+                                    'last_scan_first_ip',
+                                    0))
+                            if time.time() - last_scan_first_ip < self.scan_delay:
+                                logger.info("Stopping due to SCAN_DELAY")
+                        except ValueError:
+                            pass
+                        self.setConfig('last_scan_first_ip', time.time())
+                    ip_generator.last_scanned_ip = ip
+                    yield ip
+            ip_generator.last_scanned_ip = last_scanned_ip
 
-                self._scan_address(ip)
-                last_scanned_ip = ip
+            with ThreadPoolExecutor(max_workers=64) as executor:
+                executor.map(self._scan_address, ip_generator())
         finally:
-            self.setConfig('last_scanned_ip', str(last_scanned_ip))
+            self.setConfig('last_scanned_ip',
+                           str(ip_generator.last_scanned_ip))
 
         # Check the known FTPs
         self.check_all_statuses()
