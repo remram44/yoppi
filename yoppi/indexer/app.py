@@ -101,7 +101,12 @@ class Indexer:
     def _defaultServerName(self, address):
         try:
             names = socket.gethostbyaddr(address)
-            return names[0]
+            name = names[0]
+            for suffix in self.hostname_strip_suffix:
+                if name.endswith(suffix):
+                    name = name[:-len(suffix)]
+                    break
+            return name
         except socket.herror:
             return ''
 
