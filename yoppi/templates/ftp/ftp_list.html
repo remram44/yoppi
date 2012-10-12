@@ -6,12 +6,12 @@
             {% for server in servers %}
                 <li{% if active_server == server %} class="active"{% endif %}>
                     <a href="{{ server.get_absolute_url }}" {% if not server.online %}class="muted"{% endif %}>
-                        <h4><i class="{% if server.online %}icon-folder-open{% else %}icon-ban-circle{% endif %}"></i>
-                            {{ server.display_name|escape }}
+                        <strong><i class="{% if server.online %}icon-folder-open{% else %}icon-ban-circle{% endif %}"></i>
+                            {{ server.display_name|escape }}</strong>
                             <small>{{ server.size|filesizeformat }}</small>
-                        </h4>
+
                         {% if not server.online %}
-                            {{ server.display_lastonline }} ago
+                            <br/><small>{{ server.display_lastonline }} ago</small>
                         {% endif %}</a>
                 </li>
             {% endfor %}
