@@ -298,8 +298,10 @@ class Indexer:
         # Check the known FTPs
         self.check_all_statuses()
 
-        # TODO : Remove the old FTPs (that haven't been online in a long time)
+        # Remove the old FTPs (that haven't been online in a long time)
         # Uses: PRUNE_FTP_TIME
+        delete_if_older = timezone.now() - datetime.timedelta(seconds=self.prune_ftp_time)
+        FtpServer.objects.filter(last_online__lte=delete_if_older).delete()
 
         # Index the FTPs that have been indexed last
         # Uses: INDEX_DELAY, INDEX_COUNT
