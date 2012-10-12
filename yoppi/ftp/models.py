@@ -59,6 +59,9 @@ class FtpServer(models.Model):
     def display_lastonline(self):
         return self._format_duration(self._seconds_since_lastonline())
 
+    def icon(self):
+        return 'folder-open' if self.online else 'ban-circle'
+
 
 ICONS = {
     'avi': 'film',

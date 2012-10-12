@@ -6,7 +6,7 @@
             {% for server in servers %}
                 <li{% if active_server == server %} class="active"{% endif %}>
                     <a href="{{ server.get_absolute_url }}" {% if not server.online %}class="muted"{% endif %}>
-                        <strong><i class="{% if server.online %}icon-folder-open{% else %}icon-ban-circle{% endif %}"></i>
+                        <strong><i class="icon-{{ server.icon }}"></i>
                             {{ server.display_name|escape }}</strong>
                             <small>{{ server.size|filesizeformat }}</small>
 
