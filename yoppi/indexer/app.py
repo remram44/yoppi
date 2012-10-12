@@ -158,10 +158,26 @@ class Indexer:
         return sum(self._scan_address(str(ip))
             for ip in IPRange(min_ip, max_ip))
 
-    def watchdog(self):
+    # Check all the already-discovered FTPs
+    def check_all_statuses(self):
         """Check if the known ftps are online"""
         for ftp in FtpServer.objects.all():
-            self._scan_address(ftp.address, ftp)
+            self._scan_address(IP(ftp.address), ftp)
+
+    # Check a specific list of FTPs
+    def check_statuses(self, servers):
+        for serv in servers:
+            try:
+                try:
+                    ip = IP(serv)
+                except ValueError:
+                    ftp = FtpServer.objects.get(name=serv)
+                else:
+                    ftp = FtpServer.objects.get(address=serv)
+            except FtpServer.DoesNotExist:
+                logger.error(ugettext(u"Nothing matches '%s'"), serv)
+            else:
+                self._scan_address(IP(ftp.address), ftp)
 
     # Index a server
     def index(self, address):
@@ -278,7 +294,8 @@ class Indexer:
         finally:
             self.setConfig('last_scanned_ip', str(last_scanned_ip))
 
-        # TODO : Check the known FTPs (all of them?)
+        # Check the known FTPs
+        self.check_all_statuses()
 
         # TODO : Remove the old FTPs (that haven't been online in a long time)
         # Uses: PRUNE_FTP_TIME
