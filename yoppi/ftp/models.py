@@ -16,7 +16,9 @@ class FtpServer(models.Model):
     # This field has no impact on the users but is used to prevent two
     # concurrent processes from indexing the same server
     indexing = models.DateTimeField(
-            "indexing start date or null", null=True, default=None, blank=True)
+            "indexing start date or null", null=True, default=None)
+    last_indexed = models.DateTimeField(
+            "last indexing date", null=True, default=None)
 
     # TODO : Locale-dependent
     _times = (

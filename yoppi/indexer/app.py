@@ -224,6 +224,8 @@ class Indexer:
                 logger.info(ugettext(u"%(ins)d insertions, "
                                      "%(dele)d deletions"),
                             dict(ins=len(to_insert), dele=len(to_delete)))
+                server.last_indexed = timezone.now()
+                #server.save() # done by ServerIndexingLock
                 return nb_files, total_size, to_insert, to_delete
             except ftplib.all_errors, e:
                 logger.error(
@@ -281,9 +283,11 @@ class Indexer:
         # TODO : Remove the old FTPs (that haven't been online in a long time)
         # Uses: PRUNE_FTP_TIME
 
-        # TODO : Index the FTPs that have been indexed last
+        # Index the FTPs that have been indexed last
         # Uses: INDEX_DELAY, INDEX_COUNT
-        for ftp in FtpServer.objects.all():
+        index_if_older = timezone.now() - datetime.timedelta(seconds=self.index_delay)
+        for ftp in (FtpServer.objects.filter(last_indexed__lte=index_if_older)
+                .order_by('last_indexed')[:self.index_count]):
             try:
                 self.index(ftp.address)
             except socket.error:
