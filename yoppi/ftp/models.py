@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy
+from django.utils.translation import ugettext, ugettext_lazy
 
 
 class FtpServer(models.Model):
@@ -18,7 +18,6 @@ class FtpServer(models.Model):
     indexing = models.DateTimeField(
             "indexing start date or null", null=True, default=None, blank=True)
 
-    # TODO : Locale-dependent
     _times = (
         (1, ugettext_lazy(u'seconds')),
         (60, ugettext_lazy(u'minutes')),
@@ -26,6 +25,20 @@ class FtpServer(models.Model):
         (24, ugettext_lazy(u'days')),
         (7, ugettext_lazy(u'weeks')),
     )
+
+    @staticmethod
+    def _format_duration(t):
+        if t <= 0:
+            return ugettext(u"just now")
+        else:
+            last_label = ''
+            for length, label in FtpServer._times:
+                if t > length:
+                    t /= length
+                    last_label = label
+                else:
+                    break
+            return u"%d %s" % (int(t), last_label)
 
     def display_name(self):
         return self.name or self.address
@@ -42,15 +55,7 @@ class FtpServer(models.Model):
         return td.seconds + td.days * 24 * 3600
 
     def display_lastonline(self):
-        t = self._seconds_since_lastonline()
-        last_label = ''
-        for length, label in FtpServer._times:
-            if t > length:
-                t /= length
-                last_label = label
-            else:
-                break
-        return u"%d %s" % (int(t), last_label)
+        return self._format_duration(self._seconds_since_lastonline())
 
 
 ICONS = {

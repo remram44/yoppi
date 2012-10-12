@@ -14,5 +14,5 @@ def setup_logging(verbosity):
     logging.basicConfig(level=LEVELS[int(verbosity)],
                         format='%(message)s')
 
-# Some kludge to fix #20
+# Some kludge to fix __unicode__ vs __str__ issues
 fixed_pgettext_lazy = lazy(pgettext, str)

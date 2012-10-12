@@ -1,8 +1,14 @@
 from django.test import TestCase, Client
+from django.utils import timezone, translation
+
+from yoppi.ftp.models import FtpServer
 
 
 class BasicTest(TestCase):
     fixtures = ['basic.json']
+
+    def setUp(self):
+        translation.activate('en-US')
 
     def test_servers_list(self):
         # Query the index
@@ -64,3 +70,20 @@ class BasicTest(TestCase):
         response = self.client.get('/download/192.168.0.42/dir/icon.png', follow=False)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['Location'], 'ftp://192.168.0.42/dir/icon.png')
+
+    def test_time_format(self):
+        self.assertEqual(FtpServer._format_duration(5), u"5 seconds")
+        self.assertEqual(FtpServer._format_duration(-5), u"just now")
+        self.assertEqual(FtpServer._format_duration(0), u"just now")
+        self.assertEqual(FtpServer._format_duration(
+                2 * 60 + 8),
+                u"2 minutes")
+        self.assertEqual(FtpServer._format_duration(
+                (23 * 60 + 18) * 60 + 54),
+                u"23 hours")
+        self.assertEqual(FtpServer._format_duration(
+                ((4 * 24 + 3) * 60 + 18) * 60 + 54),
+                u"4 days")
+        self.assertEqual(FtpServer._format_duration(
+                ((1024 * 24 + 3) * 60 + 18) * 60 + 54),
+                u"146 weeks")
