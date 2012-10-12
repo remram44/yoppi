@@ -26,11 +26,11 @@ class ServerAlreadyIndexing(Exception):
 
 
 @contextlib.contextmanager
-def ServerIndexingLock(address, name=None):
+def ServerIndexingLock(address):
     # Try to create a FtpServer
     try:
         server = FtpServer(
-                address=address, name=name,
+                address=address,
                 online=True, last_online=timezone.now(),
                 indexing=timezone.now())
         server.save(force_insert=True)
@@ -134,7 +134,7 @@ class Indexer:
                 logger.warn(ugettext(u"discovered new server at %s\n"),
                             address)
                 server = FtpServer(
-                    address=address, name=self._defaultServerName(address),
+                    address=address,
                     online=True, last_online=timezone.now())
                 server.save()
             return True
@@ -203,9 +203,10 @@ class Indexer:
                 pass
             raise
 
+        # TODO : override names from config
         name = self._defaultServerName(address)
 
-        with ServerIndexingLock(address, name) as server:
+        with ServerIndexingLock(address) as server:
             try:
                 ftp.login()
                 try:
@@ -242,6 +243,7 @@ class Indexer:
                                      "%(dele)d deletions"),
                             dict(ins=len(to_insert), dele=len(to_delete)))
                 server.last_indexed = timezone.now()
+                server.name = name
                 #server.save() # done by ServerIndexingLock
                 return nb_files, total_size, to_insert, to_delete
             except ftplib.all_errors, e:
