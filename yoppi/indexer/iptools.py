@@ -193,7 +193,7 @@ def parse_ip_ranges(ranges):
             all(isinstance(r, (IP, str, long, int)) for r in ranges)):
         range = IPRange(ranges[0], ranges[1])
         warnings.warn(ugettext(
-                "Warning: parse_ip_range(): got two addresses, "
+                u"Warning: parse_ip_range(): got two addresses, "
                 "assuming a range rather than two distinct addresses\n"
                 "Wrap them inside a tuple to remove this warning, eg:\n"
                 "  'IP_RANGES': (\n"

@@ -8,7 +8,7 @@ from models import IndexerParameter
 
 from django.db import IntegrityError
 from django.utils import timezone
-from django.utils.translation import ugettext, pgettext, gettext_lazy
+from django.utils.translation import ugettext
 from django.conf import settings as django_settings
 
 from itertools import izip
@@ -118,14 +118,14 @@ class Indexer:
                 if logger.isEnabledFor(logging.WARN):
                     name = ftp_object.display_name()
                     if ftp_object.online:
-                        logging.info(ugettext("%s is still online"), name)
+                        logger.info(ugettext(u"%s is still online"), name)
                     else:
-                        logging.warn(ugettext("%s is now online"), name)
+                        logger.warn(ugettext(u"%s is now online"), name)
                 ftp_object.online = True
                 ftp_object.last_online = timezone.now()
                 ftp_object.save()
             except FtpServer.DoesNotExist:
-                logger.warn(ugettext("discovered new server at %s\n"),
+                logger.warn(ugettext(u"discovered new server at %s\n"),
                             address)
                 server = FtpServer(
                     address=address, name=self._defaultServerName(address),
@@ -139,13 +139,13 @@ class Indexer:
                 if logger.isEnabledFor(logging.WARN):
                     name = ftp_object.display_name()
                     if not ftp_object.online:
-                        logger.info(ugettext("%s is still offline"), name)
+                        logger.info(ugettext(u"%s is still offline"), name)
                     else:
-                        logger.warn(ugettext("%s is now offline"), name)
+                        logger.warn(ugettext(u"%s is now offline"), name)
                 ftp_object.online = False
                 ftp_object.save()
             except FtpServer.DoesNotExist:
-                logger.debug(ugettext("%s didn't respond"), address)
+                logger.debug(ugettext(u"%s didn't respond"), address)
             return False
 
     # Scan an IP range
@@ -160,8 +160,7 @@ class Indexer:
 
     # Index a server
     def index(self, address):
-        logger.warn(pgettext("indexing in progress from 'index' command",
-                             "Indexing '%s'..."), address)
+        logger.warn(ugettext(u"Indexing '%s'..."), address)
 
         # 'address' must be a valid IP address
         if not isinstance(address, IP):
@@ -190,8 +189,9 @@ class Indexer:
                 try:
                     ftp.sendcmd('OPTS UTF8 ON')
                 except ftplib.error_perm:
-                    logger.warn(ugettext("server %s doesn't seem to handle unicode. "
-                                         "Brace yourselves."), address)
+                    logger.warn(ugettext(u"server %s doesn't seem to handle "
+                                         "unicode. Brace yourselves."),
+                                address)
 
                 # Fetch all the files currently known
                 files = dict((f.fullpath(), f) for f in File.objects.filter(server=server))
@@ -212,17 +212,17 @@ class Indexer:
                 # It will get save()'d when we exit the 'with' block
 
                 ftp.close()
-                logger.warn(gettext_lazy("%(nb_files)d files found on %(address)s, "
-                                         "%(total_size)d b"),
+                logger.warn(ugettext(u"%(nb_files)d files found on "
+                                     "%(address)s, %(total_size)d b"),
                             dict(nb_files=nb_files, address=address,
                                  total_size=total_size))
-                logger.info(gettext_lazy("%(ins)d insertions, %(dele)d deletions"),
+                logger.info(ugettext(u"%(ins)d insertions, "
+                                     "%(dele)d deletions"),
                             dict(ins=len(to_insert), dele=len(to_delete)))
                 return nb_files, total_size, to_insert, to_delete
             except ftplib.all_errors, e:
                 logger.error(
-                        gettext_lazy(u"got error indexing %(server)s: "
-                                     "%(error)s"),
+                        ugettext(u"got error indexing %(server)s: %(error)s"),
                         dict(server=address, error=e.__class__.__name__))
 
     def getConfig(self, name, default=None):
@@ -282,7 +282,8 @@ class Indexer:
             try:
                 self.index(ftp.address)
             except socket.error:
-                logger.info('%s is offline, not indexing.', ftp.address)
+                logger.info(ugettext(u"%s is offline, not indexing."),
+                            ftp.address)
 
 
 def get_project_indexer():

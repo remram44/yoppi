@@ -36,7 +36,7 @@ class Command(BaseCommand):
                     self.index(address_in_tuple[0])
                 except CommandError as e:
                     self.stderr.write(smart_str(self.style.ERROR(
-                            ugettext('Error: %s\n' % e))))
+                            ugettext(u"Error: %s\n" % e))))
         else:
             for address in args:
                 self.index(address)
@@ -46,6 +46,6 @@ class Command(BaseCommand):
             self.indexer.index(address)
         except ServerAlreadyIndexing as e:
             raise CommandError(
-                    ugettext("%s is already being indexed") % address, e)
+                    ugettext(u"%s is already being indexed") % address, e)
         except (ValueError, IOError) as e:
             raise CommandError("%s: %s" % (e.__class__.__name__, e))

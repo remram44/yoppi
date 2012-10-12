@@ -14,7 +14,9 @@ except KeyError:
 
 
 class Command(NoArgsCommand):
-    help = 'called regularly to perform the actions configured in settings.py'
+    help = pgettext_lazy(u"help for 'cron' command",
+                         u"called regularly to perform the actions configured "
+                         "in settings.py")
 
     def handle(self, *args, **options):
         setup_logging(options['verbosity'])
