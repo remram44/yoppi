@@ -299,7 +299,8 @@ class Indexer:
             ip_generator.last_scanned_ip = last_scanned_ip
 
             with ThreadPoolExecutor(max_workers=64) as executor:
-                executor.map(self._scan_address, ip_generator())
+                results = executor.map(self._scan_address, ip_generator())
+                next(results) # workaround bug 11777
         finally:
             self.setConfig('last_scanned_ip',
                            str(ip_generator.last_scanned_ip))
