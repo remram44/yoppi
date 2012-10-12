@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 
 {% block base_content %}
-<div class="span3">
-    {% include "ftp/ftp_list.html" %}
-</div>
-<div class="span9">
+<div class="span9" id="mainContent">
     {% block content %}{% endblock %}
+</div>
+<div class="span3" id="sidebar">
+    {% include "ftp/ftp_list.html" %}
 </div>
 {% endblock %}

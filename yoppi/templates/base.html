@@ -13,6 +13,19 @@
         .sidebar-nav {
             padding: 9px 0;
         }
+        #mainContent {
+            float:right;
+        }
+        #sidebar {
+             margin-left: 0;
+         }
+
+        @media (max-width: 767px) {
+            #mainContent {
+                float:none;
+            }
+        }
+
     </style>
     <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap-responsive.min.css" type="text/css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
