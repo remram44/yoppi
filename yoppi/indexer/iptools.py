@@ -50,9 +50,12 @@ class IP:
 
 
 class IPRangeIterator:
-    def __init__(self, range):
+    def __init__(self, range, pos=None):
         self.range = range
-        self.pos = range.first.num
+        if pos is not None:
+            self.pos = pos
+        else:
+            self.pos = range.first.num
 
     def __iter__(self):
         return self
@@ -90,6 +93,14 @@ class IPRange:
         if not isinstance(ip, IP):
             ip = IP(ip)
         return self.first < ip < self.last or ip in (self.first, self.last)
+
+    def iter_from(self, ip):
+        if not isinstance(ip, IP):
+            ip = IP(ip)
+        if ip.num < self.first.num:
+            return IPRangeIterator(self, self.first.num)
+        else:
+            return IPRangeIterator(self, ip.num)
 
     def __iter__(self):
         return IPRangeIterator(self)
@@ -129,18 +140,40 @@ class IPSet:
 
     def contains(self, ip):
         ip = IP(ip)
-        for range in self.ranges:
-            if range.contains(ip):
-                return True
-
-        return False
-
-    def intersection(self, other):
-        # TODO
-        pass
+        pos = bisect(self.ranges, IPRange(ip)) - 1
+        if pos >= 0:
+            return self.ranges[pos].contains(ip)
 
     def __iter__(self):
         return itertools.chain.from_iterable(self.ranges)
+
+    def loop_iter_from(self, ip):
+        if not isinstance(ip, IP):
+            ip = IP(ip)
+        if not self.ranges:
+            # Only case where the iterator won't be infinite
+            return iter([])
+        pos = bisect(self.ranges, IPRange(ip)) - 1
+        if pos >= 0:
+            return itertools.chain(
+                    # Partial iteration through the first range
+                    self.ranges[pos].iter_from(ip),
+                    # Iteration through the following ranges
+                    itertools.chain.from_iterable(self.ranges[pos+1:]),
+                    # Continue iterating
+                    itertools.chain.from_iterable(
+                            itertools.cycle(self.ranges)))
+        else:
+            return itertools.chain.from_iterable(itertools.cycle(self.ranges))
+        # Documentation states that the iterable passed to chain.from_iterable
+        # "is evaluated lazily", so we assume that it is legal to pass it an
+        # infinite iterator
+
+    def first(self):
+        if self.ranges:
+            return self.ranges[0].first
+        else:
+            return None
 
 
 def parse_ip_ranges(ranges):
@@ -160,7 +193,7 @@ def parse_ip_ranges(ranges):
             all(isinstance(r, (IP, str, long, int)) for r in ranges)):
         range = IPRange(ranges[0], ranges[1])
         warnings.warn(ugettext(
-                "Warning: parse_ip_range(): got two addresses, "
+                u"Warning: parse_ip_range(): got two addresses, "
                 "assuming a range rather than two distinct addresses\n"
                 "Wrap them inside a tuple to remove this warning, eg:\n"
                 "  'IP_RANGES': (\n"

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import warnings
+import itertools
 from django.test import TestCase
 from django.utils import unittest
 import mock
@@ -86,6 +87,8 @@ class TestIPTools(unittest.TestCase):
 
     def test_set_iter(self):
         set = IPSet()
+        iter = set.__iter__()
+        self.assertRaises(StopIteration, iter.next)
         set.add(['10.8.1.5', '10.8.1.7'])
         set.add(['10.9.2.2', '10.9.2.4'])
         set.add(['10.9.2.3', '10.9.2.5'])
@@ -98,6 +101,35 @@ class TestIPTools(unittest.TestCase):
         self.assertEqual(iter.next(), IP('10.9.2.4'))
         self.assertEqual(iter.next(), IP('10.9.2.5'))
         self.assertRaises(StopIteration, iter.next)
+
+    def test_set_loop_iter_from(self):
+        set = IPSet()
+        iter = set.loop_iter_from('10.8.2.5')
+        self.assertRaises(StopIteration, iter.next)
+        set.add(['10.8.1.5', '10.8.1.7'])
+        set.add(['10.9.2.2', '10.9.2.4'])
+        set.add(['10.9.2.3', '10.9.2.5'])
+        iter = set.loop_iter_from('9.8.7.6')
+        exp = [i for i in itertools.chain(set, set)]
+        self.comp_iters(iter, exp)
+        iter = set.loop_iter_from('10.8.1.6')
+        self.comp_iters(iter, exp, 1)
+        iter = set.loop_iter_from('10.8.1.9')
+        self.comp_iters(iter, exp, 3)
+        iter = set.loop_iter_from('10.9.9.9')
+        self.comp_iters(iter, exp)
+
+    def comp_iters(self, actual, expected, offset=0):
+        """Compares two iterables until one runs out.
+
+        Optionally skips some values from the 'expected' iterable.
+        """
+        it = iter(expected)
+        while offset > 0:
+            it.next()
+            offset -= 1
+        for a, e in itertools.izip(actual, it):
+            self.assertEqual(a, e)
 
     def test_ip_range_parser(self):
         expected = [
