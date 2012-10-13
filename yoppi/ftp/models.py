@@ -86,7 +86,7 @@ def guess_file_icon(filename):
 class File(models.Model):
     server = models.ForeignKey(FtpServer, related_name='files')
     name = models.CharField(max_length=200)
-    path = models.CharField(max_length=300, blank=True) # Never ends with '/'
+    path = models.CharField(max_length=300, blank=True, db_index=True) # Never ends with '/'
     is_directory = models.BooleanField()
     size = models.IntegerField()
 
