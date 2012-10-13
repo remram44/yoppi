@@ -12,7 +12,9 @@ class SuspiciousFtp(Exception):
 class RemoteFile:
     # drwxr-xr-x 1 ftp ftp  0 Mar 11 13:49 stuff
     # -r--r--r-- 1 ftp ftp 57 Feb 20  2012 smthg.zip
-    _line_regex = re.compile(r"^([a-z-]{10})\s+[0-9]+\s+([^\s]+)\s+([^\s]+)\s+([0-9]+)\s+([A-Za-z]+ +[0-9]{1,2}\s+[0-9:]+)\s(.+)$")
+    # TODO : make readable (http://docs.python.org/library/re.html#re.VERBOSE)
+    # Note : group is optional, because we've found some idiot with a file with not group ?!?
+    _line_regex = re.compile(r"^([a-z-]{10})\s+[0-9]+\s+([^\s]+)\s+([^\s]+)?\s+([0-9]+)\s+([A-Za-z]+ +[0-9]{1,2}\s+[0-9:]+)\s(.+)$")
     # Groups:
     #   1: permissions
     #   2: user
@@ -24,7 +26,7 @@ class RemoteFile:
     def __init__(self, line, decode=str.decode):
         m = self._line_regex.match(line)
         if not m:
-            raise IOError("invalid LIST format\n")
+            raise IOError("invalid LIST format : '%s'"%line)
         self.is_directory = m.group(1)[0] == "d"
         self.is_link = m.group(1)[0] == 'l'
         self.raw_size = int(m.group(4))
