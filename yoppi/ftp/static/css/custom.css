@@ -1,6 +1,7 @@
 /* Fixes for the file list */
 .table .size-column {
     text-align: right;
+    white-space: nowrap;
 }
 @media (min-width: 767px) {
     .table .ftp-column {
