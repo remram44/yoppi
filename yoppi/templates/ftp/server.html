@@ -5,5 +5,14 @@
 {% block page_title %}{% blocktrans with server_name=active_server.display_name %}Listing - {{ server_name }} - Yoppi{% endblocktrans %}{% endblock %}
 
 {% block content %}
+    <ul class="breadcrumb">
+        {% for dir in hierarchy %}
+            {% if dir.current %}
+                <li class="active"><a href="{% url yoppi.ftp.views.download active_server.address path %}">{{ dir.name }}</a></li>
+            {% else %}
+                <li><a href="{{ dir.url }}">{{ dir.name }}</a></li> <span class="divider">/</span>
+            {% endif %}
+        {% endfor %}
+    </ul>
     {% include "ftp/file_list.html" %}
 {% endblock %}

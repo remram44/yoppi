@@ -61,7 +61,7 @@ def download(request, address, path):
         raise Http404
     filename = path
     path, name = filename[:sep], filename[sep+1:]
-    file = get_object_or_404(File, server=server, path=path, name=name, is_directory=False)
+    file = get_object_or_404(File, server=server, path=path, name=name)
 
     # TODO : download statistics?
 

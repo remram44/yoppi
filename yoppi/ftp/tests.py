@@ -62,16 +62,16 @@ class BasicTest(TestCase):
         response = self.client.get('/search/', follow=False)
         self.assertRedirects(response, '/', status_code=302)
 
-    def test_download_dir(self):
-        response = self.client.get('/download/192.168.0.12/mirror', follow=False)
-        self.assertEqual(response.status_code, 404)
+    def test_go_dir(self):
+        response = self.client.get('/go/192.168.0.12/mirror', follow=False)
+        self.assertEqual(response.status_code, 302)
 
     def test_download(self):
-        response = self.client.get('/download/192.168.0.37/todo.txt', follow=False)
+        response = self.client.get('/go/192.168.0.37/todo.txt', follow=False)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['Location'], 'ftp://192.168.0.37/todo.txt')
 
-        response = self.client.get('/download/192.168.0.42/dir/icon.png', follow=False)
+        response = self.client.get('/go/192.168.0.42/dir/icon.png', follow=False)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['Location'], 'ftp://192.168.0.42/dir/icon.png')
 
