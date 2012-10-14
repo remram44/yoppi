@@ -79,7 +79,7 @@ def search(request):
 
     # TODO : A simple contains is probably not enough
     all_files = (File.objects.filter(name__icontains=query)
-                 .order_by('-is_directory', 'name').select_related('server'))
+                 .order_by('-server__online','-is_directory', 'name').select_related('server'))
     paginator = Paginator(all_files, 100)
     page = request.GET.get('page')
     try:
