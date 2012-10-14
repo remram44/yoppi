@@ -55,6 +55,9 @@ class BasicTest(TestCase):
         response = self.client.get('/search/?query=testing')
         self.assertEqual(len(response.context['files']), 5)
 
+        response = self.client.get('/search/?query=FINAL%20100')
+        self.assertEqual(len(response.context['files']), 1)
+
     def test_search_empty(self):
         response = self.client.get('/search/', follow=False)
         self.assertRedirects(response, '/', status_code=302)

@@ -77,9 +77,10 @@ def search(request):
         # not query or empty query
         return redirect('yoppi.ftp.views.index')
 
-    # TODO : A simple contains is probably not enough
-    all_files = (File.objects.filter(name__icontains=query)
-                 .order_by('-server__online','-is_directory', 'name').select_related('server'))
+    all_files = (File.objects.order_by('-server__online','-is_directory', 'name')
+                 .select_related('server'))
+    for word in query.split():
+        all_files = all_files.filter(name__icontains=word)
     paginator = Paginator(all_files, 100)
     page = request.GET.get('page')
     try:
