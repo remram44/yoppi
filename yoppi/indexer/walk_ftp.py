@@ -1,7 +1,12 @@
+import logging
 import re
 
 from yoppi.ftp.models import File
 from django.utils.translation import ugettext
+
+
+logger = logging.getLogger(__name__)
+
 
 MAX_DEPTH = 500
 MAX_FILES = 1000000
@@ -62,7 +67,7 @@ class FallbackDecoder(object):
 
     def next_enc(self):
         try:
-            self.enc = self.encodings.pop()
+            self.enc = self.encodings.pop(0)
         except IndexError:
             raise UnicodeDecodeError("Tried all the encodings for this ftp, "
                                      "none fits.")
@@ -72,6 +77,7 @@ class FallbackDecoder(object):
             return str.decode(self.enc)
         except UnicodeDecodeError:
             self.next_enc()
+            logging.info('Switched encoding to %s because of file %s', self.enc, repr(str))
             return self.decode(str)
 
 
