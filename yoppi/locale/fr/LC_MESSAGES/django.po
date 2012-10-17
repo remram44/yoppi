@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: Yoppi Indexer\n"
 "Report-Msgid-Bugs-To: https://github.com/supelec-rezo/yoppi/issues\n"
 "POT-Creation-Date: 2012-04-24 20:35+0200\n"
-"PO-Revision-Date: 2012-10-09 19:09+0200\n"
+"PO-Revision-Date: 2012-10-17 14:55+0000\n"
 "Last-Translator: Rémi Rampin <remirampin@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -48,7 +48,7 @@ msgstr "semaines"
 
 #: ftp/models.py:35
 msgid "just now"
-msgstr ""
+msgstr "à l'instant"
 
 #: indexer/app.py:128
 #, python-format
@@ -83,22 +83,22 @@ msgstr "%s n'a pas répondu"
 #: indexer/app.py:182
 #, python-format
 msgid "Nothing matches '%s'"
-msgstr ""
+msgstr "Rien ne correspond à \"%s\""
 
 #: indexer/app.py:188
-#, fuzzy, python-format
+#, python-format
 msgid "Indexing '%s'..."
 msgstr "Indexation de \"%s\"..."
 
 #: indexer/app.py:218
-#, fuzzy, python-format
+#, python-format
 msgid "server %s doesn't seem to handle unicode. Brace yourselves."
-msgstr "le serveur %s n'a pas l'air de gérer l'unicode"
+msgstr "le serveur %s n'a pas l'air de supporter unicode. Attention les yeux..."
 
 #: indexer/app.py:241
-#, fuzzy, python-format
+#, python-format
 msgid "%(nb_files)d files found on %(address)s, %(total_size)d b"
-msgstr "%(nb_files)d fichiers trouvés sur %(address)s"
+msgstr "%(nb_files)d fichiers trouvés sur %(address)s, %(total_size)d o"
 
 #: indexer/app.py:245
 #, python-format
@@ -108,12 +108,12 @@ msgstr "%(ins)d insertions, %(dele)d suppressions"
 #: indexer/app.py:254
 #, python-format
 msgid "got error indexing %(server)s: %(error)s"
-msgstr ""
+msgstr "erreur pendant l'indexation de %(server)s : %(error)s"
 
 #: indexer/app.py:324
 #, python-format
 msgid "%s is offline, not indexing."
-msgstr ""
+msgstr "%s est hors-ligne, n'indexe pas."
 
 #: indexer/iptools.py:196
 msgid ""
@@ -154,26 +154,24 @@ msgid "%(server)s has more than %(max_files)d files. It doesn't seem legit."
 msgstr "%(server)s a plus de %(max_files)d fichiers. Ca n'a pas l'air normal."
 
 #: indexer/management/commands/checkstatus.py:16
-#, fuzzy
 msgctxt "'checkstatus' command"
 msgid "Check all known servers"
-msgstr "Indexe tous les ftps connus."
+msgstr "Vérifie tous les serveurs connus"
 
 #: indexer/management/commands/checkstatus.py:19
-#, fuzzy
 msgctxt "args for 'checkstatus' command"
 msgid "<server_address> [server_address [...]]"
-msgstr "<adresse_serveur> [adresse_serveur [...]]"
+msgstr "<adresse> [adresse [...]]"
 
 #: indexer/management/commands/checkstatus.py:21
 msgctxt "help for 'checkstatus' command"
 msgid "Check the availability of all known servers"
-msgstr ""
+msgstr "Vérifie la disponibilité de tous les serveurs connus"
 
 #: indexer/management/commands/cron.py:18
 msgctxt "help for 'cron' command"
 msgid "called regularly to perform the actions configured in settings.py"
-msgstr ""
+msgstr "appelé régulièrement pour effectuer les tâches configurées dans settings.py"
 
 #: indexer/management/commands/index.py:20
 msgctxt "'index' command"
@@ -275,9 +273,8 @@ msgid "Search results - Yoppi"
 msgstr "Résultats de recherche - Yoppi"
 
 #: templates/ftp/search.html:8
-#, fuzzy
 msgid "Search:"
-msgstr "Recherche"
+msgstr "Recherche :"
 
 #: templates/ftp/search.html:18
 msgctxt "previous page"
@@ -285,9 +282,9 @@ msgid "previous"
 msgstr "précédent"
 
 #: templates/ftp/search.html:19
-#, fuzzy, python-format
+#, python-format
 msgid "Page %(number)s of %(num_pages)s"
-msgstr "Page %(files.number)s sur %(files.paginator.num_pages)s"
+msgstr "Page %(number)s sur %(num_pages)s"
 
 #: templates/ftp/search.html:25
 msgctxt "next page"
