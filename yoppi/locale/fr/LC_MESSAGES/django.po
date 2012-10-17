@@ -18,86 +18,104 @@ msgstr ""
 "Language: fr\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: settings.py:56
+#: settings.py:77
 msgid "English"
 msgstr "Anglais"
 
-#: settings.py:57
+#: settings.py:78
 msgid "French"
 msgstr "Français"
 
-#: ftp/models.py:23
+#: ftp/models.py:25
 msgid "seconds"
 msgstr "secondes"
 
-#: ftp/models.py:24
+#: ftp/models.py:26
 msgid "minutes"
 msgstr "minutes"
 
-#: ftp/models.py:25
+#: ftp/models.py:27
 msgid "hours"
 msgstr "heures"
 
-#: ftp/models.py:26
+#: ftp/models.py:28
 msgid "days"
 msgstr "jours"
 
-#: ftp/models.py:27
+#: ftp/models.py:29
 msgid "weeks"
 msgstr "semaines"
 
-#: indexer/app.py:109
+#: ftp/models.py:35
+msgid "just now"
+msgstr ""
+
+#: indexer/app.py:128
 #, python-format
 msgid "%s is still online"
 msgstr "%s est toujours en ligne"
 
-#: indexer/app.py:111
+#: indexer/app.py:130
 #, python-format
 msgid "%s is now online"
 msgstr "%s est maintenant en ligne"
 
-#: indexer/app.py:116
+#: indexer/app.py:135
 #, python-format
 msgid "discovered new server at %s\n"
 msgstr "découverte d'un nouveau serveur à %s\n"
 
-#: indexer/app.py:130
+#: indexer/app.py:149
 #, python-format
 msgid "%s is still offline"
 msgstr "%s est toujours hors-ligne"
 
-#: indexer/app.py:132
+#: indexer/app.py:151
 #, python-format
 msgid "%s is now offline"
 msgstr "%s est maintenant hors-ligne"
 
-#: indexer/app.py:136
+#: indexer/app.py:155
 #, python-format
 msgid "%s didn't respond"
 msgstr "%s n'a pas répondu"
 
-#: indexer/app.py:152
+#: indexer/app.py:182
 #, python-format
-msgctxt "indexing in progress from 'index' command"
+msgid "Nothing matches '%s'"
+msgstr ""
+
+#: indexer/app.py:188
+#, fuzzy, python-format
 msgid "Indexing '%s'..."
 msgstr "Indexation de \"%s\"..."
 
-#: indexer/app.py:180
-#, python-format
-msgid "server %s doesn't seem to handle unicode. "
+#: indexer/app.py:218
+#, fuzzy, python-format
+msgid "server %s doesn't seem to handle unicode. Brace yourselves."
 msgstr "le serveur %s n'a pas l'air de gérer l'unicode"
 
-#: indexer/app.py:203
-#, python-format
-msgid "%(nb_files)d files found on %(address)s, "
+#: indexer/app.py:241
+#, fuzzy, python-format
+msgid "%(nb_files)d files found on %(address)s, %(total_size)d b"
 msgstr "%(nb_files)d fichiers trouvés sur %(address)s"
 
-#: indexer/app.py:207
+#: indexer/app.py:245
 #, python-format
 msgid "%(ins)d insertions, %(dele)d deletions"
 msgstr "%(ins)d insertions, %(dele)d suppressions"
 
-#: indexer/iptools.py:163
+#: indexer/app.py:254
+#, python-format
+msgid "got error indexing %(server)s: %(error)s"
+msgstr ""
+
+#: indexer/app.py:324
+#, python-format
+msgid "%s is offline, not indexing."
+msgstr ""
+
+#: indexer/iptools.py:196
 msgid ""
 "Warning: parse_ip_range(): got two addresses, assuming a range rather than "
 "two distinct addresses\n"
@@ -121,7 +139,7 @@ msgstr ""
 "      '{0!s}', '{1!s}'\n"
 "  ),\n"
 
-#: indexer/walk_ftp.py:79
+#: indexer/walk_ftp.py:87
 #, python-format
 msgid ""
 "%(server)s's directory depth is more than %(max_depth)d. It doesn't seem "
@@ -130,52 +148,59 @@ msgstr ""
 "la profondeur de répertoires de %(server)s est supérieure à %(max_depth)d. "
 "Ca n'a pas l'air normal."
 
-#: indexer/walk_ftp.py:120
+#: indexer/walk_ftp.py:128
 #, python-format
 msgid "%(server)s has more than %(max_files)d files. It doesn't seem legit."
 msgstr "%(server)s a plus de %(max_files)d fichiers. Ca n'a pas l'air normal."
+
+#: indexer/management/commands/checkstatus.py:16
+#, fuzzy
+msgctxt "'checkstatus' command"
+msgid "Check all known servers"
+msgstr "Indexe tous les ftps connus."
+
+#: indexer/management/commands/checkstatus.py:19
+#, fuzzy
+msgctxt "args for 'checkstatus' command"
+msgid "<server_address> [server_address [...]]"
+msgstr "<adresse_serveur> [adresse_serveur [...]]"
+
+#: indexer/management/commands/checkstatus.py:21
+msgctxt "help for 'checkstatus' command"
+msgid "Check the availability of all known servers"
+msgstr ""
+
+#: indexer/management/commands/cron.py:18
+msgctxt "help for 'cron' command"
+msgid "called regularly to perform the actions configured in settings.py"
+msgstr ""
 
 #: indexer/management/commands/index.py:20
 msgctxt "'index' command"
 msgid "Index all known ftps"
 msgstr "Indexe tous les ftps connus."
 
-#: indexer/management/commands/index.py:24
+#: indexer/management/commands/index.py:23
 msgctxt "args for 'index' command"
 msgid "<server_address> [server_address [...]]"
 msgstr "<adresse_serveur> [adresse_serveur [...]]"
 
-#: indexer/management/commands/index.py:26
+#: indexer/management/commands/index.py:25
 msgctxt "help for 'index' command"
 msgid "(re-)index the specified FTP server"
 msgstr "(ré-)indexe le serveur FTP spécifié"
 
-#: indexer/management/commands/index.py:28
-msgctxt "labels received by the 'index' command"
-msgid "address"
-msgstr "adresse"
-
-#: indexer/management/commands/index.py:43
+#: indexer/management/commands/index.py:39
 #, python-format
 msgid "Error: %s\n"
 msgstr "Erreur : %s\n"
 
-#: indexer/management/commands/index.py:53
+#: indexer/management/commands/index.py:49
 #, python-format
 msgid "%s is already being indexed"
 msgstr "%s est déjà en cours d'indexations"
 
-#: indexer/management/commands/scan.py:9
-msgctxt "args for 'scan' command"
-msgid "<first IP> [last IP]"
-msgstr "<première IP> [dernière IP]"
-
-#: indexer/management/commands/scan.py:11
-msgctxt "help for 'scan' command"
-msgid "scan the specified IP range to detect FTP servers"
-msgstr "scanne la plage IP spécifiée pour détecter des serveurs FTP"
-
-#: indexer/management/commands/scan.py:24
+#: indexer/management/commands/scan.py:25
 #, python-format
 msgid "Expected 2 parameters, got %d"
 msgstr "2 paramètres attendus, %d reçus"
@@ -200,71 +225,33 @@ msgstr ""
 "Il y a eu une erreur pendant le traitement de votre requête. Nous en avons "
 "été notifiés et examinerons le problème rapidement."
 
-#: templates/base.html:23
-msgid "Home"
-msgstr "Accueil"
-
-#: templates/base.html:29
+#: templates/base.html:26
 msgid "Search"
 msgstr "Recherche"
 
-#: templates/base.html:39
+#: templates/base.html:35
 #, python-format
 msgid "Yoppi Indexer on <a href=\"%(project_url)s\">github.com</a>"
 msgstr "Yoppi Indexer sur <a href=\"%(project_url)s\">github.com</a>"
 
-#: templates/ftp/file_list.html:18
+#: templates/ftp/file_list.html:6
 msgctxt "file name table header"
 msgid "Name"
 msgstr "Nom"
 
-#: templates/ftp/file_list.html:19
+#: templates/ftp/file_list.html:7
 msgctxt "file size table header"
 msgid "Size"
 msgstr "Taille"
 
-#: templates/ftp/file_list.html:20
+#: templates/ftp/file_list.html:8
 msgctxt "server name table header"
 msgid "Server"
 msgstr "Serveur"
 
-#: templates/ftp/file_list.html:46
+#: templates/ftp/file_list.html:30
 msgid "No files to show"
 msgstr "Aucun fichier à afficher"
-
-#: templates/ftp/file_list.html:56
-msgctxt "previous page"
-msgid "previous"
-msgstr "précédent"
-
-#: templates/ftp/file_list.html:57
-#, python-format
-msgid "Page %(files.number)s of %(files.paginator.num_pages)s"
-msgstr "Page %(files.number)s sur %(files.paginator.num_pages)s"
-
-#: templates/ftp/file_list.html:59
-msgctxt "next page"
-msgid "next"
-msgstr "suivant"
-
-#: templates/ftp/ftp_list.html:6
-msgctxt "server name table header"
-msgid "Name"
-msgstr "Nom"
-
-#: templates/ftp/ftp_list.html:7
-msgctxt "server size table header"
-msgid "Size"
-msgstr "Taille"
-
-#: templates/ftp/ftp_list.html:8
-msgctxt "table header"
-msgid "Offline for"
-msgstr "Hors-ligne depuis"
-
-#: templates/ftp/ftp_list.html:31
-msgid "No servers..."
-msgstr "Aucun serveur..."
 
 #: templates/ftp/index.html:5
 msgid "FTP index - Yoppi"
@@ -288,9 +275,24 @@ msgid "Search results - Yoppi"
 msgstr "Résultats de recherche - Yoppi"
 
 #: templates/ftp/search.html:8
-#, python-format
-msgid "Search: %(query)s"
-msgstr "Recherche : %(query)s"
+#, fuzzy
+msgid "Search:"
+msgstr "Recherche"
+
+#: templates/ftp/search.html:18
+msgctxt "previous page"
+msgid "previous"
+msgstr "précédent"
+
+#: templates/ftp/search.html:19
+#, fuzzy, python-format
+msgid "Page %(number)s of %(num_pages)s"
+msgstr "Page %(files.number)s sur %(files.paginator.num_pages)s"
+
+#: templates/ftp/search.html:25
+msgctxt "next page"
+msgid "next"
+msgstr "suivant"
 
 #: templates/ftp/server.html:5
 #, python-format
