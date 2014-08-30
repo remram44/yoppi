@@ -279,7 +279,8 @@ class Indexer:
 
         try:
             def ip_generator():
-                for i, ip in izip(xrange(1, self.scan_count),
+                scan_count = min(self.scan_count, len(self.ip_ranges))
+                for i, ip in izip(xrange(1, scan_count),
                                   self.ip_ranges.loop_iter_from(
                                         ip_generator.last_scanned_ip)):
                     # Rate limiting: check last time indexed for first address
