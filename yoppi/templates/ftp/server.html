@@ -8,7 +8,7 @@
     <ul class="breadcrumb">
         {% for dir in hierarchy %}
             {% if dir.current %}
-                <li class="active"><a href="{% url yoppi.ftp.views.download active_server.address path %}">{{ dir.name }}</a></li>
+                <li class="active"><a href="{% url 'yoppi.ftp.views.download' active_server.address path %}">{{ dir.name }}</a></li>
             {% else %}
                 <li><a href="{{ dir.url }}">{{ dir.name }}</a></li> <span class="divider">/</span>
             {% endif %}
