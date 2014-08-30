@@ -9,7 +9,7 @@ class FtpServer(models.Model):
             "server's IP address",
             primary_key=True, max_length=15)
     name = models.CharField(
-            "optionnal readable name", max_length=200, blank=True, default='')
+            "optional readable name", max_length=200, blank=True, default='')
     online = models.BooleanField(default=True)
     size = models.IntegerField(default=0)
     last_online = models.DateTimeField(default=lambda: timezone.now())

@@ -1,10 +1,9 @@
 from django.conf import settings as django_settings
-from django.core.management.base import NoArgsCommand, CommandError
+from django.core.management.base import NoArgsCommand
 from django.utils.translation import pgettext_lazy
 
 from yoppi.indexer.app import Indexer
 from yoppi.indexer.management.commands import setup_logging
-from yoppi.ftp.models import FtpServer
 
 
 try:

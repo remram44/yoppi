@@ -1,5 +1,5 @@
-from django.test import TestCase, Client
-from django.utils import timezone, translation
+from django.test import TestCase
+from django.utils import translation
 
 from yoppi.ftp.models import FtpServer, guess_file_icon
 
