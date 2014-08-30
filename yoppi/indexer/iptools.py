@@ -87,7 +87,7 @@ class IPRange:
         return self.first < other.first
 
     def __eq__(self, other):
-        return self.first == other.first
+        return (self.first, self.last) == (other.first, other.last)
 
     def contains(self, ip):
         if not isinstance(ip, IP):
