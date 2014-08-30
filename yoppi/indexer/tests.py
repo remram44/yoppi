@@ -27,9 +27,11 @@ class TestIPTools(unittest.TestCase):
         self.assertFalse(range.contains('10.8.3.0'))
         self.assertTrue(range.contains('10.8.2.1'))
         self.assertTrue(range.contains('10.8.1.1'))
+        self.assertEqual(len(range), 2*256 + 255)
 
     def test_range_iter(self):
         range = IPRange('10.8.255.254', '10.9.0.2')
+        self.assertEqual(len(range), 5)
         iter = range.__iter__()
         self.assertEqual(iter.next(), IP('10.8.255.254'))
         self.assertEqual(iter.next(), IP('10.8.255.255'))
@@ -46,12 +48,14 @@ class TestIPTools(unittest.TestCase):
         set = IPSet()
         self.assertEqual(len(set.ranges), 0)
         self.assertFalse(set.contains('192.168.0.3'))
+        self.assertEqual(len(set), 0)
 
     def test_set_basic(self):
         set = IPSet()
 
         set.add(['160.228.152.1', '160.228.154.4'])
         self.assertEqual(len(set.ranges), 1)
+        self.assertEqual(len(set), 516)
 
         self.assertTrue(set.contains('160.228.153.252'))
         self.assertFalse(set.contains('1.2.3.4'))
@@ -84,6 +88,7 @@ class TestIPTools(unittest.TestCase):
         self.assertEqual(set.ranges, [
             IPRange('160.228.152.1', '193.2.3.4'),
         ])
+        self.assertEqual(len(set), (((33 * 256) - 226) * 256 - 149) * 256 + 4)
 
     def test_set_iter(self):
         set = IPSet()

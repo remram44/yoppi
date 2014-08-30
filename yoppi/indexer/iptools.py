@@ -89,6 +89,9 @@ class IPRange:
     def __eq__(self, other):
         return (self.first, self.last) == (other.first, other.last)
 
+    def __len__(self):
+        return self.last.num - self.first.num + 1
+
     def contains(self, ip):
         if not isinstance(ip, IP):
             ip = IP(ip)
@@ -112,6 +115,7 @@ class IPRange:
 class IPSet:
     def __init__(self):
         self.ranges = []
+        self._length = None
 
     def add(self, range):
         if not isinstance(range, IPRange):
@@ -138,11 +142,18 @@ class IPSet:
                     max(range.last.num, self.ranges[pos+1].last.num))
             del self.ranges[pos+1]
 
+        self._length = None
+
     def contains(self, ip):
         ip = IP(ip)
         pos = bisect(self.ranges, IPRange(ip)) - 1
         if pos >= 0:
             return self.ranges[pos].contains(ip)
+
+    def __len__(self):
+        if self._length is None:
+            self._length = sum(len(r) for r in self.ranges)
+        return self._length
 
     def __iter__(self):
         return itertools.chain.from_iterable(self.ranges)
