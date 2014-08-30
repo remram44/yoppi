@@ -7,7 +7,7 @@ import logging
 import socket
 import time
 
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 from django.utils import timezone
 from django.utils.translation import ugettext
 from django.conf import settings as django_settings
@@ -30,11 +30,14 @@ class ServerAlreadyIndexing(Exception):
 def ServerIndexingLock(address):
     # Try to create a FtpServer
     try:
-        server = FtpServer(
-                address=address,
-                online=True, last_online=timezone.now(),
-                indexing=timezone.now())
-        server.save(force_insert=True)
+        # Necessary not to break unit tests,
+        # see http://stackoverflow.com/a/23326971/711380
+        with transaction.atomic():
+            server = FtpServer(
+                    address=address,
+                    online=True, last_online=timezone.now(),
+                    indexing=timezone.now())
+            server.save(force_insert=True)
     # It already exists -- try to update it
     except IntegrityError:
         # Try to lock it
