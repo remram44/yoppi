@@ -161,7 +161,8 @@ class Indexer:
     # Scan an IP range
     def scan(self, min_ip, max_ip):
         with ThreadPoolExecutor(max_workers=64) as executor:
-            executor.map(self._scan_address, IPRange(min_ip, max_ip))
+            # list() necessary to work around Python bug 11777
+            list(executor.map(self._scan_address, IPRange(min_ip, max_ip)))
 
     # Check all the already-discovered FTPs
     def check_all_statuses(self):
@@ -169,7 +170,8 @@ class Indexer:
         all_servers = list((IP(ftp.address), ftp)
                            for ftp in FtpServer.objects.all())
         with ThreadPoolExecutor(max_workers=64) as executor:
-            executor.map(self._scan_address, all_servers)
+            # list() necessary to work around Python bug 11777
+            list(executor.map(self._scan_address, all_servers))
 
     # Check a specific list of FTPs
     def check_statuses(self, servers):
@@ -303,8 +305,8 @@ class Indexer:
             ip_generator.last_scanned_ip = last_scanned_ip
 
             with ThreadPoolExecutor(max_workers=64) as executor:
-                results = executor.map(self._scan_address, ip_generator())
-                next(results) # workaround bug 11777
+                # list() necessary to work around Python bug 11777
+                list(executor.map(self._scan_address, ip_generator()))
         finally:
             self.setConfig('last_scanned_ip',
                            str(ip_generator.last_scanned_ip))
