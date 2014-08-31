@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 from django.core.management.base import BaseCommand, CommandError
 from django.utils.translation import ugettext, ugettext_lazy
+
 from yoppi.indexer.app import get_project_indexer
 from yoppi.indexer.management.commands import setup_logging
 

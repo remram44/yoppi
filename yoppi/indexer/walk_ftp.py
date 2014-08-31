@@ -1,10 +1,10 @@
 from __future__ import unicode_literals
 
+from django.utils.translation import ugettext
 import logging
 import re
 
 from yoppi.ftp.models import File
-from django.utils.translation import ugettext
 
 
 logger = logging.getLogger(__name__)

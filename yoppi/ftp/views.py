@@ -1,10 +1,11 @@
 from __future__ import unicode_literals
 
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.shortcuts import render, get_object_or_404, redirect
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, Http404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.encoding import smart_str
+
 from yoppi.ftp.models import FtpServer, File
 
 

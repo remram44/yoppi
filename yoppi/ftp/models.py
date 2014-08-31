@@ -1,9 +1,9 @@
 from __future__ import unicode_literals
 
-import mimetypes
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext, ugettext_lazy
+import mimetypes
 
 
 class FtpServer(models.Model):

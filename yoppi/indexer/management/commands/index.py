@@ -1,10 +1,11 @@
 from __future__ import unicode_literals
 
-import logging
-from optparse import make_option
 from django.core.management.base import CommandError, BaseCommand
 from django.utils.encoding import smart_str
 from django.utils.translation import ugettext, ugettext_lazy
+import logging
+from optparse import make_option
+
 from yoppi.ftp.models import FtpServer
 from yoppi.indexer.app import ServerAlreadyIndexing, get_project_indexer
 from yoppi.indexer.management.commands import setup_logging

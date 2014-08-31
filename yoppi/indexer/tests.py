@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import warnings
-import itertools
 from django.test import TestCase
 from django.utils import unittest
+import itertools
 import mock
-from iptools import IP, IPRange, IPSet, InvalidAddress, parse_ip_ranges
+import warnings
+
+from yoppi.indexer.iptools import IP, IPRange, IPSet, InvalidAddress, \
+    parse_ip_ranges
 
 
 class TestIPTools(unittest.TestCase):

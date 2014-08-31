@@ -1,8 +1,8 @@
-import itertools
 from bisect import bisect
+from django.utils.translation import ugettext
+import itertools
 import warnings
 
-from django.utils.translation import ugettext
 
 class InvalidAddress(ValueError):
     pass

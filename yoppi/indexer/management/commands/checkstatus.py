@@ -1,12 +1,12 @@
 from __future__ import unicode_literals
 
-from optparse import make_option
-
 from django.core.management.base import BaseCommand
 from django.utils.translation import ugettext_lazy
+from optparse import make_option
 
 from yoppi.indexer.app import get_project_indexer
 from yoppi.indexer.management.commands import setup_logging
+
 
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (

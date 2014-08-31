@@ -3,16 +3,15 @@ from __future__ import unicode_literals
 from concurrent.futures import ThreadPoolExecutor
 import contextlib
 import datetime
+from django.db import IntegrityError, transaction
+from django.utils import timezone
+from django.utils.translation import ugettext
+from django.conf import settings as django_settings
 import ftplib
 from itertools import izip
 import logging
 import socket
 import time
-
-from django.db import IntegrityError, transaction
-from django.utils import timezone
-from django.utils.translation import ugettext
-from django.conf import settings as django_settings
 
 from yoppi.ftp.models import FtpServer, File
 from yoppi.indexer.iptools import IP, IPRange, parse_ip_ranges
