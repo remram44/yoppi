@@ -83,7 +83,7 @@ def safe_bulk_create(to_insert):
         File.objects.bulk_create(to_insert)
 
 
-class Indexer:
+class Indexer(object):
     def __init__(
             self,
             IP_RANGES=(),

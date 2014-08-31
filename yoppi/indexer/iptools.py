@@ -8,7 +8,7 @@ class InvalidAddress(ValueError):
     pass
 
 
-class IP:
+class IP(object):
     def __init__(self, i):
         if isinstance(i, IP):
             self.num = i.num
@@ -49,7 +49,7 @@ class IP:
         return "IP(%s)" % self.__str__()
 
 
-class IPRangeIterator:
+class IPRangeIterator(object):
     def __init__(self, range, pos=None):
         self.range = range
         if pos is not None:
@@ -68,7 +68,7 @@ class IPRangeIterator:
             return IP(self.pos-1)
 
 
-class IPRange:
+class IPRange(object):
     def __init__(self, first, last=None):
         if (not last and (type(first) == list or type(first) == tuple) and
                 len(first) == 2):
@@ -112,7 +112,7 @@ class IPRange:
         return "IPRange(%s, %s)" % (str(self.first), str(self.last))
 
 
-class IPSet:
+class IPSet(object):
     def __init__(self):
         self.ranges = []
         self._length = None

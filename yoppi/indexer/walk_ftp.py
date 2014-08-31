@@ -14,7 +14,7 @@ MAX_FILES = 1000000
 class SuspiciousFtp(Exception):
     pass
 
-class RemoteFile:
+class RemoteFile(object):
     # drwxr-xr-x 1 ftp ftp  0 Mar 11 13:49 stuff
     # -r--r--r-- 1 ftp ftp 57 Feb 20  2012 smthg.zip
     # TODO : make readable (http://docs.python.org/library/re.html#re.VERBOSE)
