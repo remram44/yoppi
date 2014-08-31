@@ -103,4 +103,4 @@ class FileIconsTest(TestCase):
         self.assertEqual(guess_file_icon('tagada.MP3'), 'music')
 
     def test_application_x(self):
-        self.assertEqual(guess_file_icon('tagada.flac'), 'music')
+        self.assertEqual(guess_file_icon('tagada.mp3'), 'music')
