@@ -3,6 +3,8 @@ from django.utils.translation import ugettext
 import itertools
 import warnings
 
+from yoppi.compat import basestring_, baseint_
+
 
 class InvalidAddress(ValueError):
     pass
@@ -12,7 +14,7 @@ class IP(object):
     def __init__(self, i):
         if isinstance(i, IP):
             self.num = i.num
-        elif isinstance(i, basestring):
+        elif isinstance(i, basestring_):
             c = i.split('.')
             if len(c) != 4:
                 raise InvalidAddress("Not in IPv4 format")
@@ -24,7 +26,7 @@ class IP(object):
                 if v < 0 or v >= 256:
                     raise InvalidAddress("Byte not in [0-255]")
             self.num = ((c[0]*256 + c[1])*256 + c[2])*256 + c[3]
-        elif isinstance(i, (int, long)):
+        elif isinstance(i, baseint_):
             self.num = i
         else:
             raise TypeError("Expected str or int, got %s" % type(i))
@@ -66,6 +68,7 @@ class IPRangeIterator(object):
         else:
             self.pos += 1
             return IP(self.pos-1)
+    __next__ = next
 
 
 class IPRange(object):
@@ -193,7 +196,7 @@ def parse_ip_ranges(ranges):
 
     ipset = IPSet()
 
-    if isinstance(ranges, (IPRange, IP, basestring, long, int)):
+    if isinstance(ranges, (IPRange, IP, basestring_, baseint_)):
         ipset.add(ranges)
         return ipset
 
@@ -201,7 +204,7 @@ def parse_ip_ranges(ranges):
     # We assume that this is a single range and not two ranges of one address
     # each
     if (len(ranges) == 2 and
-            all(isinstance(r, (IP, basestring, long, int)) for r in ranges)):
+            all(isinstance(r, (IP, basestring_, baseint_)) for r in ranges)):
         range = IPRange(ranges[0], ranges[1])
         warnings.warn(ugettext(
                 "Warning: parse_ip_range(): got two addresses, "
@@ -224,7 +227,7 @@ def parse_ip_ranges(ranges):
                 ipset.add(IPRange(r[0], r[1]))
             else:
                 raise ValueError("two addresses needed to define a range!")
-        # Works for IP, IPRange, basestring, long, int
+        # Works for IP, IPRange, str, int
         else:
             ipset.add(r)
     return ipset

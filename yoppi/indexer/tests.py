@@ -37,12 +37,12 @@ class TestIPTools(unittest.TestCase):
         range = IPRange('10.8.255.254', '10.9.0.2')
         self.assertEqual(len(range), 5)
         iter = range.__iter__()
-        self.assertEqual(iter.next(), IP('10.8.255.254'))
-        self.assertEqual(iter.next(), IP('10.8.255.255'))
-        self.assertEqual(iter.next(), IP('10.9.0.0'))
-        self.assertEqual(iter.next(), IP('10.9.0.1'))
-        self.assertEqual(iter.next(), IP('10.9.0.2'))
-        self.assertRaises(StopIteration, iter.next)
+        self.assertEqual(next(iter), IP('10.8.255.254'))
+        self.assertEqual(next(iter), IP('10.8.255.255'))
+        self.assertEqual(next(iter), IP('10.9.0.0'))
+        self.assertEqual(next(iter), IP('10.9.0.1'))
+        self.assertEqual(next(iter), IP('10.9.0.2'))
+        self.assertRaises(StopIteration, lambda: next(iter))
 
     def test_ipset(self):
         set = IPSet()
@@ -97,24 +97,24 @@ class TestIPTools(unittest.TestCase):
     def test_set_iter(self):
         set = IPSet()
         iter = set.__iter__()
-        self.assertRaises(StopIteration, iter.next)
+        self.assertRaises(StopIteration, lambda: next(iter))
         set.add(['10.8.1.5', '10.8.1.7'])
         set.add(['10.9.2.2', '10.9.2.4'])
         set.add(['10.9.2.3', '10.9.2.5'])
         iter = set.__iter__()
-        self.assertEqual(iter.next(), IP('10.8.1.5'))
-        self.assertEqual(iter.next(), IP('10.8.1.6'))
-        self.assertEqual(iter.next(), IP('10.8.1.7'))
-        self.assertEqual(iter.next(), IP('10.9.2.2'))
-        self.assertEqual(iter.next(), IP('10.9.2.3'))
-        self.assertEqual(iter.next(), IP('10.9.2.4'))
-        self.assertEqual(iter.next(), IP('10.9.2.5'))
-        self.assertRaises(StopIteration, iter.next)
+        self.assertEqual(next(iter), IP('10.8.1.5'))
+        self.assertEqual(next(iter), IP('10.8.1.6'))
+        self.assertEqual(next(iter), IP('10.8.1.7'))
+        self.assertEqual(next(iter), IP('10.9.2.2'))
+        self.assertEqual(next(iter), IP('10.9.2.3'))
+        self.assertEqual(next(iter), IP('10.9.2.4'))
+        self.assertEqual(next(iter), IP('10.9.2.5'))
+        self.assertRaises(StopIteration, lambda: next(iter))
 
     def test_set_loop_iter_from(self):
         set = IPSet()
         iter = set.loop_iter_from('10.8.2.5')
-        self.assertRaises(StopIteration, iter.next)
+        self.assertRaises(StopIteration, lambda: next(iter))
         set.add(['10.8.1.5', '10.8.1.7'])
         set.add(['10.9.2.2', '10.9.2.4'])
         set.add(['10.9.2.3', '10.9.2.5'])
@@ -135,7 +135,7 @@ class TestIPTools(unittest.TestCase):
         """
         it = iter(expected)
         while offset > 0:
-            it.next()
+            next(it)
             offset -= 1
         for a, e in itertools.izip(actual, it):
             self.assertEqual(a, e)

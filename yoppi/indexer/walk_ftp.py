@@ -30,7 +30,7 @@ class RemoteFile(object):
     #   5: date
     #   6: filename
 
-    def __init__(self, line, decode=str.decode):
+    def __init__(self, line, decode=bytes.decode):
         m = self._line_regex.match(line)
         if not m:
             raise IOError("invalid LIST format : '%s'"%line)

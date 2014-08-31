@@ -8,11 +8,11 @@ from django.utils import timezone
 from django.utils.translation import ugettext
 from django.conf import settings as django_settings
 import ftplib
-from itertools import izip
 import logging
 import socket
 import time
 
+from yoppi.compat import izip, itervalues
 from yoppi.ftp.models import FtpServer, File
 from yoppi.indexer.iptools import IP, IPRange, parse_ip_ranges
 from yoppi.indexer.walk_ftp import walk_ftp
@@ -232,7 +232,7 @@ class Indexer(object):
                 to_insert, to_delete, nb_files, total_size = \
                         walk_ftp(server, ftp, files)
                 # The file that were not found need to be deleted as well
-                to_delete.extend(f.id for f in files.itervalues())
+                to_delete.extend(f.id for f in itervalues(files))
 
                 # Update the files in the database
                 File.objects.filter(id__in=to_delete).delete()
@@ -255,7 +255,7 @@ class Indexer(object):
                 server.name = name
                 #server.save() # done by ServerIndexingLock
                 return nb_files, total_size, to_insert, to_delete
-            except ftplib.all_errors, e:
+            except ftplib.all_errors as e:
                 logger.error(
                         ugettext("got error indexing %(server)s: %(error)s"),
                         dict(server=address, error=e.__class__.__name__))
@@ -330,7 +330,7 @@ class Indexer(object):
             except socket.error:
                 logger.info(ugettext("%s is offline, not indexing."),
                             ftp.address)
-            except UnicodeDecodeError, e:
+            except UnicodeDecodeError as e:
                 logger.error('got %s indexing %s', e.__class__.__name__,
                              ftp.address)
 
