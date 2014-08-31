@@ -46,7 +46,7 @@ class IP(object):
         return self.num
 
     def __repr__(self):
-        return "IP(%s)" % self.__str__()
+        return "IP(%s)" % self
 
 
 class IPRangeIterator(object):
@@ -109,7 +109,7 @@ class IPRange(object):
         return IPRangeIterator(self)
 
     def __repr__(self):
-        return "IPRange(%s, %s)" % (str(self.first), str(self.last))
+        return "IPRange(%s, %s)" % (self.first, self.last)
 
 
 class IPSet(object):
@@ -193,7 +193,7 @@ def parse_ip_ranges(ranges):
 
     ipset = IPSet()
 
-    if isinstance(ranges, (IPRange, IP, str, long, int)):
+    if isinstance(ranges, (IPRange, IP, basestring, long, int)):
         ipset.add(ranges)
         return ipset
 
@@ -201,10 +201,10 @@ def parse_ip_ranges(ranges):
     # We assume that this is a single range and not two ranges of one address
     # each
     if (len(ranges) == 2 and
-            all(isinstance(r, (IP, str, long, int)) for r in ranges)):
+            all(isinstance(r, (IP, basestring, long, int)) for r in ranges)):
         range = IPRange(ranges[0], ranges[1])
         warnings.warn(ugettext(
-                u"Warning: parse_ip_range(): got two addresses, "
+                "Warning: parse_ip_range(): got two addresses, "
                 "assuming a range rather than two distinct addresses\n"
                 "Wrap them inside a tuple to remove this warning, eg:\n"
                 "  'IP_RANGES': (\n"
@@ -224,7 +224,7 @@ def parse_ip_ranges(ranges):
                 ipset.add(IPRange(r[0], r[1]))
             else:
                 raise ValueError("two addresses needed to define a range!")
-        # Works for IP, IPRange, str, long, int
+        # Works for IP, IPRange, basestring, long, int
         else:
             ipset.add(r)
     return ipset

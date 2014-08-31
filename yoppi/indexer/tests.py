@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 import warnings
 import itertools
 from django.test import TestCase
@@ -189,11 +191,11 @@ class IndexerTestCase(TestCase):
         self.FTP = self.patcher.start()
 
         def fake_dir(path, callback):
-            if path == '/':
-                callback('-r--r--r-- 1 ftp ftp 57 Feb 20  2012  smthg.zip')
-                callback('drwxr-xr-x 1 ftp ftp  0 Mar 11 13:49 stuff')
-            elif path == '/stuff':
-                callback('-r--r--r-- 1 ftp ftp 1000 Feb 20  2012 mysterioüs.zip')
+            if path == b'/':
+                callback(b'-r--r--r-- 1 ftp ftp 57 Feb 20  2012  smthg.zip')
+                callback(b'drwxr-xr-x 1 ftp ftp  0 Mar 11 13:49 stuff')
+            elif path == b'/stuff':
+                callback(b'-r--r--r-- 1 ftp ftp 1000 Feb 20  2012 mysterioüs.zip')
 
         self.FTP().dir = fake_dir
 
@@ -232,7 +234,7 @@ class IndexerTestCase(TestCase):
         indexer.index('10.9.8.7')
 
         from yoppi.ftp.models import File
-        self.assertEqual(File.objects.filter(name=u' smthg.zip').count(),
+        self.assertEqual(File.objects.filter(name=' smthg.zip').count(),
                 1)
 
     def test_infinite_loop(self):
@@ -253,7 +255,7 @@ class IndexerTestCase(TestCase):
 
         def fake_dir(path, callback):
             for i in xrange(11):
-                callback('-r--r--r-- 1 ftp ftp 57 Feb 20  2012 smthg.zip')
+                callback(b'-r--r--r-- 1 ftp ftp 57 Feb 20  2012 smthg.zip')
 
         self.FTP().dir = fake_dir
 
@@ -267,7 +269,7 @@ class IndexerTestCase(TestCase):
 
     def test_ignore_links(self):
         def fake_dir(path, callback):
-            callback('lrwxrwxrwx    1 0        0              12 Sep 12  2007 incoming -> pub/incoming')
+            callback(b'lrwxrwxrwx    1 0        0              12 Sep 12  2007 incoming -> pub/incoming')
 
         self.FTP().dir = fake_dir
 
@@ -281,7 +283,7 @@ class IndexerTestCase(TestCase):
 
     def test_alternative_encoding(self):
         def fake_dir(path, callback):
-            callback(u'-r--r--r-- 1 ftp ftp 1000 Feb 20  2012 élève.zip'.encode('latin9'))
+            callback('-r--r--r-- 1 ftp ftp 1000 Feb 20  2012 élève.zip'.encode('latin9'))
 
         self.FTP().dir = fake_dir
 
@@ -290,7 +292,7 @@ class IndexerTestCase(TestCase):
 
         from yoppi.ftp.models import File
         file = File.objects.get()
-        self.assertEqual(file.name, u'élève.zip')
+        self.assertEqual(file.name, 'élève.zip')
 
 
 if __name__ == '__main__':

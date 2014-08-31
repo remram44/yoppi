@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import mimetypes
 from django.db import models
 from django.utils import timezone
@@ -22,17 +24,17 @@ class FtpServer(models.Model):
             "last indexing date", null=True, default=None)
 
     _times = (
-        (1, ugettext_lazy(u'seconds')),
-        (60, ugettext_lazy(u'minutes')),
-        (60, ugettext_lazy(u'hours')),
-        (24, ugettext_lazy(u'days')),
-        (7, ugettext_lazy(u'weeks')),
+        (1, ugettext_lazy('seconds')),
+        (60, ugettext_lazy('minutes')),
+        (60, ugettext_lazy('hours')),
+        (24, ugettext_lazy('days')),
+        (7, ugettext_lazy('weeks')),
     )
 
     @staticmethod
     def _format_duration(t):
         if t <= 0:
-            return ugettext(u"just now")
+            return ugettext("just now")
         else:
             last_label = ''
             for length, label in FtpServer._times:
@@ -41,7 +43,7 @@ class FtpServer(models.Model):
                     last_label = label
                 else:
                     break
-            return u"%d %s" % (int(t), last_label)
+            return "%d %s" % (int(t), last_label)
 
     def display_name(self):
         return self.name or self.address
@@ -91,7 +93,7 @@ class File(models.Model):
     size = models.IntegerField()
 
     def __unicode__(self):
-        return u"%s:%s/%s" % (unicode(self.server), self.path, self.name)
+        return "%s:%s/%s" % (self.server, self.path, self.name)
 
     @models.permalink
     def get_absolute_url(self):
@@ -101,7 +103,7 @@ class File(models.Model):
             return ('yoppi.ftp.views.download', (self.server.address, self.fullpath()))
 
     def fullpath(self):
-        return self.path + u"/" + self.name
+        return self.path + "/" + self.name
 
     def icon(self):
         if self.is_directory:

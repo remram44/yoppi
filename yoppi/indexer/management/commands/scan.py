@@ -1,15 +1,16 @@
+from __future__ import unicode_literals
+
 from django.core.management.base import BaseCommand, CommandError
-from django.utils.translation import ugettext
+from django.utils.translation import ugettext, ugettext_lazy
 from yoppi.indexer.app import get_project_indexer
-from yoppi.indexer.management.commands import setup_logging, fixed_pgettext_lazy
+from yoppi.indexer.management.commands import setup_logging
 
 
 class Command(BaseCommand):
-    args = fixed_pgettext_lazy(u"args for 'scan' command",
-                               u"<first IP> [last IP]")
-    help = fixed_pgettext_lazy(u"help for 'scan' command",
-                               u"scan the specified IP range to detect FTP "
-                               "servers")
+    args = ugettext_lazy("args for 'scan' command",
+                         "<first IP> [last IP]")
+    help = ugettext_lazy("help for 'scan' command",
+                         "scan the specified IP range to detect FTP servers")
 
     def handle(self, *args, **options):
         setup_logging(options['verbosity'])
@@ -22,6 +23,6 @@ class Command(BaseCommand):
                 indexer.scan(args[0], args[1])
             else:
                 raise CommandError(
-                        ugettext(u"Expected 2 parameters, got %d") % len(args))
+                        ugettext("Expected 2 parameters, got %d") % len(args))
         except ValueError as e:
             raise CommandError("%s: %s" % (e.__class__.__name__, e))

@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 from django.test import TestCase
 from django.utils import translation
 
@@ -20,8 +22,8 @@ class BasicTest(TestCase):
         # Check the values
         self.assertEqual(len(servers), 4)
         names = [s.display_name() for s in servers]
-        self.assertEqual(names, [u'192.168.0.12', u"Madjar's bazaar",
-                                 u'My paper ftp', u"Remram's room"])
+        self.assertEqual(names, ['192.168.0.12', "Madjar's bazaar",
+                                 'My paper ftp', "Remram's room"])
 
     def test_files_list(self):
         expected_files = [
@@ -76,21 +78,21 @@ class BasicTest(TestCase):
         self.assertEqual(response['Location'], 'ftp://192.168.0.42/dir/icon.png')
 
     def test_time_format(self):
-        self.assertEqual(FtpServer._format_duration(5), u"5 seconds")
-        self.assertEqual(FtpServer._format_duration(-5), u"just now")
-        self.assertEqual(FtpServer._format_duration(0), u"just now")
+        self.assertEqual(FtpServer._format_duration(5), "5 seconds")
+        self.assertEqual(FtpServer._format_duration(-5), "just now")
+        self.assertEqual(FtpServer._format_duration(0), "just now")
         self.assertEqual(FtpServer._format_duration(
                 2 * 60 + 8),
-                u"2 minutes")
+                "2 minutes")
         self.assertEqual(FtpServer._format_duration(
                 (23 * 60 + 18) * 60 + 54),
-                u"23 hours")
+                "23 hours")
         self.assertEqual(FtpServer._format_duration(
                 ((4 * 24 + 3) * 60 + 18) * 60 + 54),
-                u"4 days")
+                "4 days")
         self.assertEqual(FtpServer._format_duration(
                 ((1024 * 24 + 3) * 60 + 18) * 60 + 54),
-                u"146 weeks")
+                "146 weeks")
 
 
 class FileIconsTest(TestCase):

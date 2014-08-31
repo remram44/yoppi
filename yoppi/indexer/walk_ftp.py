@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import logging
 import re
 
@@ -84,7 +86,7 @@ class FallbackDecoder(object):
 def _yield_files(server, connection, decode, path, depth):
     if depth > MAX_DEPTH:
         raise SuspiciousFtp(ugettext(
-            u"%(server)s's directory depth is more than %(max_depth)d. "
+            "%(server)s's directory depth is more than %(max_depth)d. "
             "It doesn't seem legit.") %
             dict(server=server.display_name(), max_depth=MAX_DEPTH))
 
@@ -125,13 +127,13 @@ def walk_ftp(server, connection, db_files):
         nb_files += 1
         if nb_files > MAX_FILES:
             raise SuspiciousFtp(ugettext(
-                    u"%(server)s has more than %(max_files)d files. "
+                    "%(server)s has more than %(max_files)d files. "
                     "It doesn't seem legit.") %
                     dict(server=server.display_name(), max_files=MAX_FILES))
         total_size += file.raw_size
 
         try:
-            ftp_file = db_files.pop(u'%s/%s' % (path, file.name))
+            ftp_file = db_files.pop('%s/%s' % (path, file.name))
         except KeyError:
             # New file -- we have to insert it
             to_insert.append(file.toFile(server, path))

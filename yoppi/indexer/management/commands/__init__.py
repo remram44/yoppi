@@ -1,6 +1,4 @@
 import logging
-from django.utils.functional import lazy
-from django.utils.translation import pgettext
 
 
 LEVELS = {
@@ -13,6 +11,3 @@ LEVELS = {
 def setup_logging(verbosity):
     logging.basicConfig(level=LEVELS[int(verbosity)],
                         format='%(message)s')
-
-# Some kludge to fix __unicode__ vs __str__ issues
-fixed_pgettext_lazy = lazy(pgettext, str)
