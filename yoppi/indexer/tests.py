@@ -195,7 +195,7 @@ class IndexerTestCase(TestCase):
                 callback(b'-r--r--r-- 1 ftp ftp 57 Feb 20  2012  smthg.zip')
                 callback(b'drwxr-xr-x 1 ftp ftp  0 Mar 11 13:49 stuff')
             elif path == b'/stuff':
-                callback(b'-r--r--r-- 1 ftp ftp 1000 Feb 20  2012 mysterioüs.zip')
+                callback('-r--r--r-- 1 ftp ftp 1000 Feb 20  2012 mysterioü.zip'.encode('utf-8'))
 
         self.FTP().dir = fake_dir
 
